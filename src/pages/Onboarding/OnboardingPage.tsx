@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import { useCut } from '../../context/CutContext';
 import { toDateString } from '../../utils/date';
+import { hairCycleData, getCycleRangeText } from '../../data/hairCycle';
 import type { UserProfile } from '../../types';
 import styles from './OnboardingPage.module.css';
 
@@ -29,6 +30,11 @@ export default function OnboardingPage() {
     }
   };
 
+  const handleHairSelect = (value: 'short' | 'medium' | 'long') => {
+    setHairLength(value);
+    setCycleDays(hairCycleData[value].recommendedDays);
+  };
+
   const handleNext = () => {
     if (step < TOTAL_STEPS - 1) {
       setStep(step + 1);
@@ -48,10 +54,12 @@ export default function OnboardingPage() {
   };
 
   const hairOptions = [
-    { value: 'short', label: '숏컷', icon: '💇‍♂️', desc: '귀 위 길이' },
-    { value: 'medium', label: '미디엄', icon: '💇', desc: '귀~턱 사이 길이' },
-    { value: 'long', label: '롱', icon: '💇‍♀️', desc: '턱 아래 길이' },
-  ] as const;
+    { value: 'short' as const, ...hairCycleData.short },
+    { value: 'medium' as const, ...hairCycleData.medium },
+    { value: 'long' as const, ...hairCycleData.long },
+  ];
+
+  const selectedCycleData = hairLength ? hairCycleData[hairLength] : null;
 
   return (
     <div className={styles.container}>
@@ -86,12 +94,15 @@ export default function OnboardingPage() {
                 <button
                   key={opt.value}
                   className={`${styles.option} ${hairLength === opt.value ? styles.selected : ''}`}
-                  onClick={() => setHairLength(opt.value)}
+                  onClick={() => handleHairSelect(opt.value)}
                 >
                   <span className={styles.optionIcon}>{opt.icon}</span>
-                  <div>
-                    <div style={{ fontWeight: 600 }}>{opt.label}</div>
-                    <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>{opt.desc}</div>
+                  <div className={styles.optionText}>
+                    <div className={styles.optionLabel}>{opt.label}</div>
+                    <div className={styles.optionDesc}>{opt.desc}</div>
+                    <div className={styles.optionCycle}>
+                      권장 주기: {opt.minWeeks}~{opt.maxWeeks}주
+                    </div>
                   </div>
                 </button>
               ))}
@@ -117,6 +128,22 @@ export default function OnboardingPage() {
           <>
             <h2 className={styles.stepTitle}>커트 주기는?</h2>
             <p className={styles.stepDesc}>보통 몇 일마다 커트하시나요?</p>
+            {selectedCycleData && (
+              <div className={styles.cycleRecommend}>
+                <div className={styles.cycleRecommendHeader}>
+                  <span>{selectedCycleData.icon}</span>
+                  <span className={styles.cycleRecommendLabel}>
+                    {selectedCycleData.label} 권장 주기
+                  </span>
+                </div>
+                <div className={styles.cycleRecommendRange}>
+                  {getCycleRangeText(hairLength as 'short' | 'medium' | 'long')}
+                </div>
+                <div className={styles.cycleRecommendTip}>
+                  {selectedCycleData.tip}
+                </div>
+              </div>
+            )}
             <div className={styles.cycleInput}>
               <input
                 className={styles.input}
@@ -128,6 +155,19 @@ export default function OnboardingPage() {
               />
               <span className={styles.cycleLabel}>일마다</span>
             </div>
+            {selectedCycleData && (
+              <div className={styles.cyclePresets}>
+                {[selectedCycleData.minWeeks, Math.round((selectedCycleData.minWeeks + selectedCycleData.maxWeeks) / 2), selectedCycleData.maxWeeks].map(weeks => (
+                  <button
+                    key={weeks}
+                    className={`${styles.cyclePresetBtn} ${cycleDays === weeks * 7 ? styles.cyclePresetActive : ''}`}
+                    onClick={() => setCycleDays(weeks * 7)}
+                  >
+                    {weeks}주 ({weeks * 7}일)
+                  </button>
+                ))}
+              </div>
+            )}
           </>
         )}
       </div>

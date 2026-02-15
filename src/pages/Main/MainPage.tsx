@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import { useCut } from '../../context/CutContext';
 import { calculateDday, getDdayStatus, formatDate, toDateString } from '../../utils/date';
+import { hairCycleData, getCycleRangeText } from '../../data/hairCycle';
 import BannerAd from '../../components/Ad/BannerAd';
 import styles from './MainPage.module.css';
 
@@ -132,6 +133,14 @@ export default function MainPage() {
           </div>
         </div>
       )}
+
+      <div className={styles.infoCard}>
+        <span className={styles.infoIcon}>{hairCycleData[profile.hairLength].icon}</span>
+        <div>
+          <div className={styles.infoText}>{hairCycleData[profile.hairLength].label} 권장 주기</div>
+          <div className={styles.infoValue}>{getCycleRangeText(profile.hairLength)}</div>
+        </div>
+      </div>
 
       <BannerAd />
 
