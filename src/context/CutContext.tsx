@@ -7,7 +7,6 @@ import type { CutRecord } from '../types';
 interface CutContextType {
   records: CutRecord[];
   addRecord: (date: string, memo?: string, salonName?: string, cost?: number) => void;
-  replaceLatestRecord: (newDate: string) => void;
   removeRecord: (id: string) => void;
   updateRecord: (id: string, updates: Partial<CutRecord>) => void;
   lastCutDate: string | null;
@@ -51,26 +50,6 @@ export function CutProvider({ children }: { children: ReactNode }) {
     });
   }, [setRecords]);
 
-  const replaceLatestRecord = useCallback((newDate: string) => {
-    setRecords(prev => {
-      if (prev.length === 0) {
-        const newRecord: CutRecord = {
-          id: uuidv4(),
-          date: newDate,
-          createdAt: new Date().toISOString(),
-        };
-        return [newRecord];
-      }
-      const sorted = [...prev].sort((a, b) => b.date.localeCompare(a.date));
-      const latestDate = sorted[0].date;
-      // 최신 날짜의 중복 기록 중 첫 번째만 남기고 날짜 교체, 나머지 중복은 제거
-      const latestRecord = sorted[0];
-      const others = prev.filter(r => r.id !== latestRecord.id && r.date !== latestDate);
-      return [{ ...latestRecord, date: newDate }, ...others]
-        .sort((a, b) => b.date.localeCompare(a.date));
-    });
-  }, [setRecords]);
-
   const removeRecord = useCallback((id: string) => {
     setRecords(prev => prev.filter(r => r.id !== id));
   }, [setRecords]);
@@ -84,12 +63,9 @@ export function CutProvider({ children }: { children: ReactNode }) {
 
   let averageCycle: number | null = null;
   if (sortedRecords.length >= 2) {
-    let totalDays = 0;
-    for (let i = 0; i < sortedRecords.length - 1; i++) {
-      const d1 = new Date(sortedRecords[i].date);
-      const d2 = new Date(sortedRecords[i + 1].date);
-      totalDays += Math.abs((d1.getTime() - d2.getTime()) / (1000 * 60 * 60 * 24));
-    }
+    const first = new Date(sortedRecords[sortedRecords.length - 1].date);
+    const last = new Date(sortedRecords[0].date);
+    const totalDays = Math.abs((last.getTime() - first.getTime()) / (1000 * 60 * 60 * 24));
     averageCycle = Math.round(totalDays / (sortedRecords.length - 1));
   }
 
@@ -97,7 +73,6 @@ export function CutProvider({ children }: { children: ReactNode }) {
     <CutContext.Provider value={{
       records: sortedRecords,
       addRecord,
-      replaceLatestRecord,
       removeRecord,
       updateRecord,
       lastCutDate,

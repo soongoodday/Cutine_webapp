@@ -85,10 +85,22 @@
   overflow: hidden;
 }
 
+.tipMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: 4px;
+}
+
+.tipCategory {
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
 .tipDuration {
   font-size: var(--font-size-xs);
   color: var(--color-text-tertiary);
-  margin-top: 4px;
 }
 
 .sectionTitle {

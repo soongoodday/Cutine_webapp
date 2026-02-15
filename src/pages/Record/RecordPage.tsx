@@ -1,18 +1,26 @@
 import { useState } from 'react';
 import { useCut } from '../../context/CutContext';
-import { formatDate } from '../../utils/date';
+import { formatDate, toDateString } from '../../utils/date';
 import Calendar from '../../components/Calendar/Calendar';
 import BannerAd from '../../components/Ad/BannerAd';
 import styles from './RecordPage.module.css';
 
 export default function RecordPage() {
-  const { records, removeRecord, averageCycle } = useCut();
+  const { records, addRecord, removeRecord, averageCycle } = useCut();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const cutDates = records.map(r => r.date);
   const selectedRecord = selectedDate ? records.find(r => r.date === selectedDate) : null;
+  const today = toDateString(new Date());
+  const isFutureDate = selectedDate ? selectedDate > today : false;
 
   const totalCost = records.reduce((sum, r) => sum + (r.cost || 0), 0);
+
+  const handleAddRecord = () => {
+    if (selectedDate && !isFutureDate) {
+      addRecord(selectedDate);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -63,7 +71,14 @@ export default function RecordPage() {
           </div>
         </div>
       ) : selectedDate ? (
-        <div className={styles.emptyState}>이 날짜에 기록이 없습니다</div>
+        <div className={styles.emptyState}>
+          <div>이 날짜에 기록이 없습니다</div>
+          {!isFutureDate && (
+            <button className={styles.addBtn} onClick={handleAddRecord}>
+              &#9986; 이 날짜에 커트 기록 추가
+            </button>
+          )}
+        </div>
       ) : (
         <div className={styles.emptyState}>날짜를 선택하여 기록을 확인하세요</div>
       )}

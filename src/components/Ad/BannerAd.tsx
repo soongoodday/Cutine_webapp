@@ -1,49 +1,58 @@
-import { useState } from 'react';
-
 interface BannerAdProps {
   size?: 'small' | 'medium';
 }
 
 export default function BannerAd({ size = 'small' }: BannerAdProps) {
-  const [loaded, setLoaded] = useState(true);
   const height = size === 'small' ? 50 : 100;
-
-  if (!loaded) return null;
 
   return (
     <div
       style={{
         width: '100%',
         height: `${height}px`,
-        background: 'linear-gradient(135deg, #f0f0f0, #e8e8e8)',
-        borderRadius: 'var(--radius-sm)',
+        background: 'linear-gradient(135deg, #6C63FF 0%, #8B83FF 50%, #A78BFA 100%)',
+        borderRadius: 'var(--radius-md)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        gap: '8px',
         marginTop: 'var(--space-md)',
         position: 'relative',
         overflow: 'hidden',
+        cursor: 'pointer',
       }}
-      onClick={() => setLoaded(true)}
     >
-      {/* 실제 배포 시 카카오 애드핏 SDK 코드로 교체 */}
-      <span style={{
-        fontSize: 'var(--font-size-xs)',
-        color: 'var(--color-text-tertiary)',
-      }}>
-        AD - 광고 영역
-      </span>
+      {/* 카카오 애드핏 SDK 연동 전 플레이스홀더 */}
+      <span style={{ fontSize: size === 'medium' ? '20px' : '16px' }}>&#9986;</span>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{
+          fontSize: size === 'medium' ? 'var(--font-size-sm)' : 'var(--font-size-xs)',
+          color: 'white',
+          fontWeight: 700,
+        }}>
+          Cutine Premium
+        </div>
+        {size === 'medium' && (
+          <div style={{
+            fontSize: 'var(--font-size-xs)',
+            color: 'rgba(255,255,255,0.8)',
+            marginTop: 2,
+          }}>
+            광고 없는 프리미엄 경험
+          </div>
+        )}
+      </div>
       <span style={{
         position: 'absolute',
         top: 4,
         right: 8,
-        fontSize: '10px',
-        color: 'var(--color-text-tertiary)',
-        background: 'rgba(255,255,255,0.8)',
+        fontSize: '9px',
+        color: 'rgba(255,255,255,0.6)',
+        background: 'rgba(0,0,0,0.15)',
         padding: '1px 4px',
         borderRadius: '2px',
       }}>
-        광고
+        AD
       </span>
     </div>
   );
