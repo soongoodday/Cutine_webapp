@@ -7,6 +7,7 @@ import type { CutRecord } from '../types';
 interface CutContextType {
   records: CutRecord[];
   addRecord: (date: string, memo?: string, salonName?: string, cost?: number) => void;
+  replaceLatestRecord: (newDate: string) => void;
   removeRecord: (id: string) => void;
   updateRecord: (id: string, updates: Partial<CutRecord>) => void;
   lastCutDate: string | null;
@@ -19,15 +20,43 @@ export function CutProvider({ children }: { children: ReactNode }) {
   const [records, setRecords] = useLocalStorage<CutRecord[]>('cutine_records', []);
 
   const addRecord = useCallback((date: string, memo?: string, salonName?: string, cost?: number) => {
-    const newRecord: CutRecord = {
-      id: uuidv4(),
-      date,
-      memo,
-      salonName,
-      cost,
-      createdAt: new Date().toISOString(),
-    };
-    setRecords(prev => [...prev, newRecord].sort((a, b) => b.date.localeCompare(a.date)));
+    setRecords(prev => {
+      const existing = prev.find(r => r.date === date);
+      if (existing) {
+        return prev.map(r =>
+          r.id === existing.id
+            ? { ...r, memo: memo ?? r.memo, salonName: salonName ?? r.salonName, cost: cost ?? r.cost }
+            : r
+        );
+      }
+      const newRecord: CutRecord = {
+        id: uuidv4(),
+        date,
+        memo,
+        salonName,
+        cost,
+        createdAt: new Date().toISOString(),
+      };
+      return [...prev, newRecord].sort((a, b) => b.date.localeCompare(a.date));
+    });
+  }, [setRecords]);
+
+  const replaceLatestRecord = useCallback((newDate: string) => {
+    setRecords(prev => {
+      if (prev.length === 0) {
+        const newRecord: CutRecord = {
+          id: uuidv4(),
+          date: newDate,
+          createdAt: new Date().toISOString(),
+        };
+        return [newRecord];
+      }
+      const sorted = [...prev].sort((a, b) => b.date.localeCompare(a.date));
+      const latestId = sorted[0].id;
+      return prev
+        .map(r => r.id === latestId ? { ...r, date: newDate } : r)
+        .sort((a, b) => b.date.localeCompare(a.date));
+    });
   }, [setRecords]);
 
   const removeRecord = useCallback((id: string) => {
@@ -56,6 +85,7 @@ export function CutProvider({ children }: { children: ReactNode }) {
     <CutContext.Provider value={{
       records: sortedRecords,
       addRecord,
+      replaceLatestRecord,
       removeRecord,
       updateRecord,
       lastCutDate,
