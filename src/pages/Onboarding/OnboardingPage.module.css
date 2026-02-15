@@ -1,0 +1,145 @@
+.container {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  padding: var(--space-xl) var(--space-lg);
+}
+
+.progress {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-2xl);
+}
+
+.progressDot {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-border);
+  transition: background 0.3s;
+}
+
+.progressDot.active {
+  background: var(--color-primary);
+}
+
+.stepContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.stepTitle {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
+}
+
+.stepDesc {
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xl);
+}
+
+.input {
+  width: 100%;
+  padding: var(--space-md);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-lg);
+  transition: border-color 0.2s;
+  background: var(--color-bg);
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+}
+
+.optionGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  font-size: var(--font-size-lg);
+  transition: all 0.2s;
+}
+
+.option.selected {
+  border-color: var(--color-primary);
+  background: rgba(108, 99, 255, 0.05);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.optionIcon {
+  font-size: 28px;
+}
+
+.footer {
+  padding: var(--space-lg) 0;
+  display: flex;
+  gap: var(--space-md);
+}
+
+.btnBack {
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.btnNext {
+  flex: 1;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: white;
+  font-weight: 700;
+  font-size: var(--font-size-lg);
+  transition: opacity 0.2s;
+}
+
+.btnNext:disabled {
+  opacity: 0.4;
+}
+
+.cycleInput {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.cycleInput .input {
+  width: 100px;
+  text-align: center;
+}
+
+.cycleLabel {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+}

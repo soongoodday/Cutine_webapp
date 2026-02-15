@@ -1,0 +1,244 @@
+.container {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--color-bg);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.backBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-lg);
+}
+
+.headerTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+/* 로그인 */
+.loginSection {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-lg);
+}
+
+.loginIcon {
+  font-size: 64px;
+  margin-bottom: var(--space-lg);
+}
+
+.loginTitle {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+}
+
+.loginDesc {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xl);
+}
+
+.loginInput {
+  width: 100%;
+  max-width: 300px;
+  padding: var(--space-md);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-md);
+  text-align: center;
+  margin-bottom: var(--space-md);
+}
+
+.loginInput:focus {
+  border-color: var(--color-primary);
+}
+
+.loginBtn {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: white;
+  font-size: var(--font-size-md);
+  font-weight: 700;
+}
+
+/* 통계 */
+.stats {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+}
+
+.statCard {
+  flex: 1;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.statNumber {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.statLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+/* 탭 */
+.tabs {
+  display: flex;
+  padding: 0 var(--space-lg);
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.tab {
+  flex: 1;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-align: center;
+}
+
+.tabActive {
+  background: var(--color-primary);
+  color: white;
+}
+
+/* 리스트 */
+.list {
+  padding: 0 var(--space-lg) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.emptyState {
+  text-align: center;
+  color: var(--color-text-tertiary);
+  padding: var(--space-2xl) 0;
+  font-size: var(--font-size-md);
+}
+
+/* 카드 */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.cardTitle {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+}
+
+.statusBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+}
+
+.statusPending {
+  background: #FFF3CD;
+  color: #856404;
+}
+
+.statusApproved {
+  background: #D4EDDA;
+  color: #155724;
+}
+
+.statusRejected {
+  background: #F8D7DA;
+  color: #721C24;
+}
+
+.cardRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: var(--font-size-sm);
+}
+
+.cardLabel {
+  color: var(--color-text-tertiary);
+  min-width: 70px;
+}
+
+.cardLink {
+  color: var(--color-info);
+  word-break: break-all;
+  text-align: right;
+}
+
+.cardMessage {
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: var(--space-sm) 0;
+  line-height: 1.4;
+}
+
+.cardActions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.approveBtn {
+  flex: 1;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  background: var(--color-safe);
+  color: white;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+}
+
+.rejectBtn {
+  flex: 1;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-danger);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--color-danger);
+}

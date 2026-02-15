@@ -1,0 +1,122 @@
+:root {
+  /* ============================================
+     🎨 브랜드 컬러 (Brand Colors)
+     - 앱의 주요 색상. 브랜드 변경 시 여기만 수정
+     ============================================ */
+  --color-primary: #6C63FF;           /* 메인 브랜드 색상 */
+  --color-primary-light: #8B83FF;     /* 밝은 브랜드 (호버, 배경) */
+  --color-primary-dark: #4A42D4;      /* 어두운 브랜드 (pressed 상태) */
+
+  /* ============================================
+     🚦 상태 컬러 (Status Colors)
+     - 성공/경고/위험/정보 표시용
+     ============================================ */
+  --color-safe: #4CAF50;              /* 성공, 여유 상태 (D-day 많이 남음) */
+  --color-warning: #FF9800;           /* 경고 상태 (D-day 가까움) */
+  --color-danger: #F44336;            /* 위험, 삭제, D-Day */
+  --color-danger-dark: #C62828;       /* 강한 위험 (D-day 초과) */
+  --color-info: #2196F3;              /* 안내, 링크 */
+
+  /* ============================================
+     🖤 중립 컬러 (Neutral Colors)
+     - 배경, 텍스트, 테두리 등
+     ============================================ */
+  --color-bg: #F5F5FA;               /* 페이지 배경 */
+  --color-surface: #FFFFFF;           /* 카드, 모달 배경 */
+  --color-text: #1A1A2E;             /* 기본 텍스트 (제목, 본문) */
+  --color-text-secondary: #6B7280;   /* 보조 텍스트 (설명, 부제) */
+  --color-text-tertiary: #9CA3AF;    /* 약한 텍스트 (힌트, 비활성) */
+  --color-border: #E5E7EB;           /* 테두리 기본 색상 */
+  --color-divider: #F0F0F0;          /* 구분선 색상 */
+
+  /* ============================================
+     🔘 버튼 컬러 (Button Colors)
+     - 버튼 색상을 일괄 변경할 때 여기만 수정
+     ============================================ */
+  --btn-primary-bg: var(--color-primary);
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-shadow: rgba(108, 99, 255, 0.35);
+  --btn-secondary-bg: var(--color-bg);
+  --btn-secondary-text: var(--color-text-secondary);
+  --btn-danger-bg: transparent;
+  --btn-danger-text: var(--color-danger);
+  --btn-danger-border: var(--color-danger);
+
+  /* ============================================
+     📐 테두리 (Border)
+     - 색상, 두께, 라운드를 통일 관리
+     ============================================ */
+  --border-color: var(--color-border);
+  --border-width: 1px;               /* 기본 테두리 두께 */
+  --border-width-thick: 2px;         /* 강조 테두리 (인풋 포커스 등) */
+  --border-default: var(--border-width) solid var(--border-color);
+
+  /* Border Radius */
+  --radius-xs: 4px;                  /* 뱃지, 태그 */
+  --radius-sm: 8px;                  /* 작은 버튼, 아이콘 */
+  --radius-md: 12px;                 /* 카드, 인풋 */
+  --radius-lg: 16px;                 /* 큰 카드, 모달 */
+  --radius-xl: 24px;                 /* D-day 카드, 히어로 */
+  --radius-full: 9999px;             /* 원형 (토글, 필터 칩) */
+
+  /* ============================================
+     ✏️ 글꼴 (Typography)
+     - 글꼴 패밀리 & 용도별 크기
+     ============================================ */
+  --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* 용도별 글자 크기 */
+  --font-size-caption: 11px;         /* 캡션, 라벨, 광고 태그 */
+  --font-size-body-sm: 13px;         /* 작은 본문, 메타 정보 */
+  --font-size-body: 15px;            /* 기본 본문 */
+  --font-size-subtitle: 18px;        /* 부제목, 카드 제목 */
+  --font-size-title: 24px;           /* 페이지 제목 */
+  --font-size-display: 32px;         /* 큰 제목, 온보딩 */
+  --font-size-hero: 48px;            /* 스플래시 로고 */
+
+  /* 이전 호환 별칭 (기존 코드 참조용) */
+  --font-size-xs: var(--font-size-caption);
+  --font-size-sm: var(--font-size-body-sm);
+  --font-size-md: var(--font-size-body);
+  --font-size-lg: var(--font-size-subtitle);
+  --font-size-xl: var(--font-size-title);
+  --font-size-2xl: var(--font-size-display);
+  --font-size-3xl: var(--font-size-hero);
+
+  /* 폰트 굵기 */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* ============================================
+     📦 그림자 (Shadows)
+     ============================================ */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);    /* 카드 기본 */
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);    /* 부유 카드 */
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);   /* 모달, 시트 */
+
+  /* ============================================
+     📏 여백 (Spacing)
+     ============================================ */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* ============================================
+     📱 레이아웃 (Layout)
+     ============================================ */
+  --bottom-nav-height: 64px;
+  --max-width: 430px;
+
+  /* ============================================
+     ⏱️ 애니메이션 (Transition)
+     ============================================ */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.2s ease;
+  --transition-slow: 0.3s ease;
+}
