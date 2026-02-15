@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { PartnerApplication } from '../../types';
+import { v4 as uuidv4 } from 'uuid';
+import type { PartnerApplication, AdminMemo } from '../../types';
 import styles from './AdminPage.module.css';
 
 const ADMIN_CODE = 'cutine2024';
+const MEMO_STORAGE_KEY = 'cutine_admin_memos';
 
 interface Reservation {
   id: string;
@@ -22,9 +24,13 @@ export default function AdminPage() {
   const navigate = useNavigate();
   const [authenticated, setAuthenticated] = useState(false);
   const [codeInput, setCodeInput] = useState('');
-  const [activeTab, setActiveTab] = useState<'partners' | 'reservations'>('partners');
+  const [activeTab, setActiveTab] = useState<'partners' | 'reservations' | 'memos'>('partners');
   const [applications, setApplications] = useState<PartnerApplication[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [memos, setMemos] = useState<AdminMemo[]>([]);
+  const [memoTitle, setMemoTitle] = useState('');
+  const [memoContent, setMemoContent] = useState('');
+  const [expandedMemoId, setExpandedMemoId] = useState<string | null>(null);
 
   useEffect(() => {
     if (authenticated) {
@@ -37,6 +43,8 @@ export default function AdminPage() {
     setApplications(apps);
     const res = JSON.parse(localStorage.getItem('cutine_reservations') || '[]');
     setReservations(res);
+    const savedMemos = JSON.parse(localStorage.getItem(MEMO_STORAGE_KEY) || '[]');
+    setMemos(savedMemos);
   };
 
   const handleLogin = () => {
@@ -61,6 +69,32 @@ export default function AdminPage() {
     );
     setReservations(updated);
     localStorage.setItem('cutine_reservations', JSON.stringify(updated));
+  };
+
+  const addMemo = () => {
+    if (!memoTitle.trim() && !memoContent.trim()) return;
+    const newMemo: AdminMemo = {
+      id: uuidv4(),
+      title: memoTitle.trim() || '제목 없음',
+      content: memoContent.trim(),
+      createdAt: new Date().toISOString(),
+    };
+    const updated = [newMemo, ...memos];
+    setMemos(updated);
+    localStorage.setItem(MEMO_STORAGE_KEY, JSON.stringify(updated));
+    setMemoTitle('');
+    setMemoContent('');
+  };
+
+  const deleteMemo = (id: string) => {
+    const updated = memos.filter(m => m.id !== id);
+    setMemos(updated);
+    localStorage.setItem(MEMO_STORAGE_KEY, JSON.stringify(updated));
+    if (expandedMemoId === id) setExpandedMemoId(null);
+  };
+
+  const toggleMemo = (id: string) => {
+    setExpandedMemoId(prev => (prev === id ? null : id));
   };
 
   const statusLabel = (status: string) => {
@@ -122,6 +156,10 @@ export default function AdminPage() {
           <div className={styles.statLabel}>예약 건수</div>
         </div>
         <div className={styles.statCard}>
+          <div className={styles.statNumber}>{memos.length}</div>
+          <div className={styles.statLabel}>메모</div>
+        </div>
+        <div className={styles.statCard}>
           <div className={styles.statNumber}>
             {applications.filter(a => a.status === 'pending').length}
           </div>
@@ -134,13 +172,19 @@ export default function AdminPage() {
           className={`${styles.tab} ${activeTab === 'partners' ? styles.tabActive : ''}`}
           onClick={() => setActiveTab('partners')}
         >
-          제휴 신청 ({applications.length})
+          제휴 ({applications.length})
         </button>
         <button
           className={`${styles.tab} ${activeTab === 'reservations' ? styles.tabActive : ''}`}
           onClick={() => setActiveTab('reservations')}
         >
-          예약 목록 ({reservations.length})
+          예약 ({reservations.length})
+        </button>
+        <button
+          className={`${styles.tab} ${activeTab === 'memos' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('memos')}
+        >
+          메모 ({memos.length})
         </button>
       </div>
 
@@ -251,6 +295,77 @@ export default function AdminPage() {
                       거절
                     </button>
                   </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {activeTab === 'memos' && (
+        <div className={styles.list}>
+          <div className={styles.memoForm}>
+            <input
+              className={styles.memoTitleInput}
+              type="text"
+              placeholder="메모 제목"
+              value={memoTitle}
+              onChange={e => setMemoTitle(e.target.value)}
+            />
+            <textarea
+              className={styles.memoTextarea}
+              placeholder="메모 내용을 입력하세요..."
+              value={memoContent}
+              onChange={e => setMemoContent(e.target.value)}
+              rows={4}
+            />
+            <button
+              className={styles.memoAddBtn}
+              onClick={addMemo}
+              disabled={!memoTitle.trim() && !memoContent.trim()}
+            >
+              메모 저장
+            </button>
+          </div>
+
+          {memos.length === 0 ? (
+            <div className={styles.emptyState}>작성된 메모가 없습니다.</div>
+          ) : (
+            memos.map(memo => (
+              <div
+                key={memo.id}
+                className={`${styles.card} ${styles.memoCard}`}
+                onClick={() => toggleMemo(memo.id)}
+              >
+                <div className={styles.cardHeader}>
+                  <span className={styles.cardTitle}>{memo.title}</span>
+                  <span className={styles.memoDate}>
+                    {new Date(memo.createdAt).toLocaleDateString('ko-KR')}
+                  </span>
+                </div>
+                {expandedMemoId === memo.id ? (
+                  <>
+                    <div className={styles.memoContent}>{memo.content}</div>
+                    <div className={styles.memoActions}>
+                      <button
+                        className={styles.memoDeleteBtn}
+                        onClick={e => {
+                          e.stopPropagation();
+                          deleteMemo(memo.id);
+                        }}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  memo.content && (
+                    <div className={styles.memoPreview}>
+                      {memo.content.length > 50
+                        ? memo.content.slice(0, 50) + '...'
+                        : memo.content}
+                    </div>
+                  )
                 )}
               </div>
             ))
