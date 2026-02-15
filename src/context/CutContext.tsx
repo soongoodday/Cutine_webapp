@@ -16,8 +16,18 @@ interface CutContextType {
 
 const CutContext = createContext<CutContextType | undefined>(undefined);
 
+function deduplicateRecords(records: CutRecord[]): CutRecord[] {
+  const seen = new Map<string, CutRecord>();
+  for (const r of records) {
+    if (!seen.has(r.date)) {
+      seen.set(r.date, r);
+    }
+  }
+  return Array.from(seen.values());
+}
+
 export function CutProvider({ children }: { children: ReactNode }) {
-  const [records, setRecords] = useLocalStorage<CutRecord[]>('cutine_records', []);
+  const [records, setRecords] = useLocalStorage<CutRecord[]>('cutine_records', [], deduplicateRecords);
 
   const addRecord = useCallback((date: string, memo?: string, salonName?: string, cost?: number) => {
     setRecords(prev => {
@@ -52,9 +62,11 @@ export function CutProvider({ children }: { children: ReactNode }) {
         return [newRecord];
       }
       const sorted = [...prev].sort((a, b) => b.date.localeCompare(a.date));
-      const latestId = sorted[0].id;
-      return prev
-        .map(r => r.id === latestId ? { ...r, date: newDate } : r)
+      const latestDate = sorted[0].date;
+      // 최신 날짜의 중복 기록 중 첫 번째만 남기고 날짜 교체, 나머지 중복은 제거
+      const latestRecord = sorted[0];
+      const others = prev.filter(r => r.id !== latestRecord.id && r.date !== latestDate);
+      return [{ ...latestRecord, date: newDate }, ...others]
         .sort((a, b) => b.date.localeCompare(a.date));
     });
   }, [setRecords]);
