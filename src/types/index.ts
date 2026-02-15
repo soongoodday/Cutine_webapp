@@ -62,3 +62,10 @@ export interface PartnerApplication {
   status: 'pending' | 'approved' | 'rejected';
   createdAt?: string;
 }
+
+export interface AdminMemo {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: string;
+}

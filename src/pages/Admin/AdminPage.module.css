@@ -242,3 +242,109 @@
   font-size: var(--font-size-sm);
   border: 1px solid var(--color-danger);
 }
+
+/* 메모 */
+.memoForm {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.memoTitleInput {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+}
+
+.memoTitleInput:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.memoTextarea {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family);
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+
+.memoTextarea:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.memoAddBtn {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: white;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+}
+
+.memoAddBtn:disabled {
+  background: var(--color-border);
+  color: var(--color-text-tertiary);
+  cursor: not-allowed;
+}
+
+.memoCard {
+  cursor: pointer;
+  transition: box-shadow var(--transition-fast);
+}
+
+.memoCard:active {
+  box-shadow: var(--shadow-md);
+}
+
+.memoDate {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.memoPreview {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-xs);
+  line-height: 1.4;
+}
+
+.memoContent {
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  margin: var(--space-sm) 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.memoActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-xs);
+}
+
+.memoDeleteBtn {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-danger);
+  font-weight: 600;
+  font-size: var(--font-size-xs);
+  border: 1px solid var(--color-danger);
+}
