@@ -10,7 +10,7 @@ import styles from './MainPage.module.css';
 export default function MainPage() {
   const navigate = useNavigate();
   const { profile, isOnboarded } = useUser();
-  const { lastCutDate, addRecord, averageCycle, records } = useCut();
+  const { lastCutDate, addRecord, replaceLatestRecord, averageCycle, records } = useCut();
   const [showDateModal, setShowDateModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(toDateString(new Date()));
 
@@ -57,7 +57,7 @@ export default function MainPage() {
               />
               <div className={styles.modalActions}>
                 <button className={styles.modalCancel} onClick={() => setShowDateModal(false)}>취소</button>
-                <button className={styles.modalConfirm} onClick={() => { addRecord(selectedDate); setShowDateModal(false); }}>기록하기</button>
+                <button className={styles.modalConfirm} onClick={() => { replaceLatestRecord(selectedDate); setShowDateModal(false); }}>기록하기</button>
               </div>
             </div>
           </div>
@@ -81,7 +81,7 @@ export default function MainPage() {
   };
 
   const handleDateCut = () => {
-    addRecord(selectedDate);
+    replaceLatestRecord(selectedDate);
     setShowDateModal(false);
   };
 
