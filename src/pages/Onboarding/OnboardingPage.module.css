@@ -143,3 +143,86 @@
   font-size: var(--font-size-lg);
   color: var(--color-text-secondary);
 }
+
+/* 머리 길이 옵션 텍스트 */
+.optionText {
+  text-align: left;
+}
+
+.optionLabel {
+  font-weight: 600;
+  font-size: var(--font-size-md);
+}
+
+.optionDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+.optionCycle {
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* 권장 주기 카드 */
+.cycleRecommend {
+  background: rgba(108, 99, 255, 0.06);
+  border: 1px solid rgba(108, 99, 255, 0.15);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.cycleRecommendHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.cycleRecommendLabel {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.cycleRecommendRange {
+  font-size: var(--font-size-lg);
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
+}
+
+.cycleRecommendTip {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* 주기 프리셋 버튼 */
+.cyclePresets {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.cyclePresetBtn {
+  flex: 1;
+  padding: var(--space-sm) var(--space-xs);
+  border-radius: var(--radius-full);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  border: 1px solid var(--color-border);
+  transition: all 0.2s;
+}
+
+.cyclePresetActive {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
