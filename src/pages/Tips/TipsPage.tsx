@@ -16,6 +16,18 @@ const categories: { value: Category; label: string }[] = [
   { value: 'care', label: '케어' },
 ];
 
+const categoryIcons: Record<string, string> = {
+  dry: '\uD83D\uDCA8',
+  style: '\u2702\uFE0F',
+  care: '\uD83E\uDDF4',
+};
+
+const categoryColors: Record<string, string> = {
+  dry: 'linear-gradient(135deg, #667eea, #764ba2)',
+  style: 'linear-gradient(135deg, #f093fb, #f5576c)',
+  care: 'linear-gradient(135deg, #4facfe, #00f2fe)',
+};
+
 export default function TipsPage() {
   const [filter, setFilter] = useState<Category>('all');
   const { profile } = useUser();
@@ -31,6 +43,39 @@ export default function TipsPage() {
     window.open(tip.videoUrl, '_blank', 'noopener');
   };
 
+  const renderThumbnail = (tip: Tip) => {
+    if (tip.thumbnail) {
+      return <img className={styles.tipThumb} src={tip.thumbnail} alt={tip.title} />;
+    }
+    return (
+      <div
+        className={styles.tipThumb}
+        style={{
+          background: categoryColors[tip.category] || categoryColors.care,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '32px',
+          position: 'relative',
+        }}
+      >
+        {categoryIcons[tip.category] || ''}
+        <span style={{
+          position: 'absolute',
+          bottom: 4,
+          right: 6,
+          fontSize: '10px',
+          color: 'rgba(255,255,255,0.9)',
+          background: 'rgba(0,0,0,0.5)',
+          padding: '1px 4px',
+          borderRadius: '2px',
+        }}>
+          {tip.duration}
+        </span>
+      </div>
+    );
+  };
+
   // 팁 3개마다 제품 추천 1개 삽입
   const renderList = () => {
     const items: React.JSX.Element[] = [];
@@ -39,10 +84,15 @@ export default function TipsPage() {
     filteredTips.forEach((tip, i) => {
       items.push(
         <div key={tip.id} className={styles.tipCard} onClick={() => handleTipClick(tip)}>
-          <img className={styles.tipThumb} src={tip.thumbnail} alt={tip.title} />
+          {renderThumbnail(tip)}
           <div className={styles.tipInfo}>
             <div className={styles.tipTitle}>{tip.title}</div>
-            <div className={styles.tipDuration}>{tip.duration}</div>
+            <div className={styles.tipMeta}>
+              <span className={styles.tipCategory}>
+                {categories.find(c => c.value === tip.category)?.label}
+              </span>
+              <span className={styles.tipDuration}>{tip.duration}</span>
+            </div>
           </div>
         </div>
       );

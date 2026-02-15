@@ -10,7 +10,7 @@ import styles from './MainPage.module.css';
 export default function MainPage() {
   const navigate = useNavigate();
   const { profile, isOnboarded } = useUser();
-  const { lastCutDate, addRecord, replaceLatestRecord, averageCycle, records } = useCut();
+  const { lastCutDate, addRecord, averageCycle, records } = useCut();
   const [showDateModal, setShowDateModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(toDateString(new Date()));
 
@@ -21,6 +21,35 @@ export default function MainPage() {
   }, [isOnboarded, navigate]);
 
   if (!profile) return null;
+
+  const handleOpenDateModal = () => {
+    setSelectedDate(toDateString(new Date()));
+    setShowDateModal(true);
+  };
+
+  const handleDateCut = () => {
+    addRecord(selectedDate);
+    setShowDateModal(false);
+  };
+
+  const dateModal = showDateModal && (
+    <div className={styles.modal} onClick={() => setShowDateModal(false)}>
+      <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+        <h3 className={styles.modalTitle}>커트한 날짜 선택</h3>
+        <input
+          className={styles.modalDateInput}
+          type="date"
+          value={selectedDate}
+          onChange={e => setSelectedDate(e.target.value)}
+          max={toDateString(new Date())}
+        />
+        <div className={styles.modalActions}>
+          <button className={styles.modalCancel} onClick={() => setShowDateModal(false)}>취소</button>
+          <button className={styles.modalConfirm} onClick={handleDateCut}>기록하기</button>
+        </div>
+      </div>
+    </div>
+  );
 
   // 아직 커트 기록이 없는 경우 첫 기록 유도
   if (!lastCutDate) {
@@ -36,32 +65,13 @@ export default function MainPage() {
           <div className={styles.character}>&#9986;</div>
           <div className={styles.ddayMessage}>첫 커트 기록을 남겨보세요!</div>
         </div>
-        <button className={styles.cutButton} onClick={() => {
-          addRecord(toDateString(new Date()));
-        }}>
+        <button className={styles.cutButton} onClick={() => addRecord(toDateString(new Date()))}>
           &#9986; 오늘 커트했어요
         </button>
-        <button className={styles.otherDateBtn} onClick={() => setShowDateModal(true)}>
+        <button className={styles.otherDateBtn} onClick={handleOpenDateModal}>
           다른 날짜에 했어요
         </button>
-        {showDateModal && (
-          <div className={styles.modal} onClick={() => setShowDateModal(false)}>
-            <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-              <h3 className={styles.modalTitle}>커트한 날짜 선택</h3>
-              <input
-                className={styles.modalDateInput}
-                type="date"
-                value={selectedDate}
-                onChange={e => setSelectedDate(e.target.value)}
-                max={toDateString(new Date())}
-              />
-              <div className={styles.modalActions}>
-                <button className={styles.modalCancel} onClick={() => setShowDateModal(false)}>취소</button>
-                <button className={styles.modalConfirm} onClick={() => { replaceLatestRecord(selectedDate); setShowDateModal(false); }}>기록하기</button>
-              </div>
-            </div>
-          </div>
-        )}
+        {dateModal}
       </div>
     );
   }
@@ -73,16 +83,6 @@ export default function MainPage() {
     short: '🧑',
     medium: '🧑‍🦱',
     long: '👩‍🦱',
-  };
-
-  const handleTodayCut = () => {
-    const today = toDateString(new Date());
-    addRecord(today);
-  };
-
-  const handleDateCut = () => {
-    replaceLatestRecord(selectedDate);
-    setShowDateModal(false);
   };
 
   return (
@@ -108,11 +108,11 @@ export default function MainPage() {
         </button>
       )}
 
-      <button className={styles.cutButton} onClick={handleTodayCut}>
+      <button className={styles.cutButton} onClick={() => addRecord(toDateString(new Date()))}>
         &#9986; 오늘 커트했어요
       </button>
 
-      <button className={styles.otherDateBtn} onClick={() => setShowDateModal(true)}>
+      <button className={styles.otherDateBtn} onClick={handleOpenDateModal}>
         다른 날짜에 했어요
       </button>
 
@@ -124,7 +124,7 @@ export default function MainPage() {
         </div>
       </div>
 
-      {averageCycle && (
+      {averageCycle !== null && averageCycle > 0 && (
         <div className={styles.infoCard}>
           <span className={styles.infoIcon}>&#128200;</span>
           <div>
@@ -144,28 +144,7 @@ export default function MainPage() {
 
       <BannerAd />
 
-      {showDateModal && (
-        <div className={styles.modal} onClick={() => setShowDateModal(false)}>
-          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <h3 className={styles.modalTitle}>커트한 날짜 선택</h3>
-            <input
-              className={styles.modalDateInput}
-              type="date"
-              value={selectedDate}
-              onChange={e => setSelectedDate(e.target.value)}
-              max={toDateString(new Date())}
-            />
-            <div className={styles.modalActions}>
-              <button className={styles.modalCancel} onClick={() => setShowDateModal(false)}>
-                취소
-              </button>
-              <button className={styles.modalConfirm} onClick={handleDateCut}>
-                기록하기
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {dateModal}
     </div>
   );
 }
