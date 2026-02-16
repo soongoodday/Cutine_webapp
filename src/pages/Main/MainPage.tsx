@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import { useCut } from '../../context/CutContext';
 import { calculateDday, getDdayStatus, formatDate, toDateString } from '../../utils/date';
-import { hairCycleData, getCycleRangeText } from '../../data/hairCycle';
+import { hairCycleData } from '../../data/hairCycle';
 import BannerAd from '../../components/Ad/BannerAd';
 import styles from './MainPage.module.css';
 
@@ -22,13 +22,24 @@ export default function MainPage() {
 
   if (!profile) return null;
 
+  // 커트한 지 N일 계산
+  const daysSinceLastCut = (() => {
+    if (!lastCutDate) return null;
+    const last = new Date(lastCutDate);
+    const now = new Date();
+    last.setHours(0, 0, 0, 0);
+    now.setHours(0, 0, 0, 0);
+    return Math.floor((now.getTime() - last.getTime()) / (1000 * 60 * 60 * 24));
+  })();
+
+  const cycleInfo = hairCycleData[profile.hairLength];
+
   const handleOpenDateModal = () => {
     setSelectedDate(toDateString(new Date()));
     setShowDateModal(true);
   };
 
   const handleDateCut = () => {
-    // "다른 날짜에 했어요" → 오늘 날짜의 빈 기록(memo/salon/cost 없는)이 있으면 교체
     const todayStr = toDateString(new Date());
     if (selectedDate !== todayStr) {
       const todayRecord = records.find(r => r.date === todayStr);
@@ -59,26 +70,39 @@ export default function MainPage() {
     </div>
   );
 
-  // 아직 커트 기록이 없는 경우 첫 기록 유도
+  // 아직 커트 기록이 없는 경우
   if (!lastCutDate) {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
-          <div>
-            <div className={styles.greeting}>{profile.nickname}님</div>
-            <div className={styles.greetingSub}>오늘도 좋은 하루 되세요</div>
+          <div className={styles.headerLabel}>나의 커트 주기</div>
+          <h1 className={styles.headerTitle}>첫 커트를 기록해보세요!</h1>
+        </div>
+
+        {cycleInfo && (
+          <div className={styles.tipBadge}>
+            <span className={styles.tipIcon}>{cycleInfo.icon}</span>
+            <span className={styles.tipText}>
+              {cycleInfo.label} 커트는 {cycleInfo.minWeeks}~{cycleInfo.maxWeeks}주 간격이 적절해요
+            </span>
+          </div>
+        )}
+
+        <div className={styles.ddayCard}>
+          <div className={styles.ddayMessage}>아래 버튼을 눌러 첫 기록을 남겨보세요!</div>
+          <div className={styles.character}>
+            <img src="/images/face.png" alt="캐릭터" />
           </div>
         </div>
-        <div className={styles.ddayCard}>
-          <div className={styles.character}>&#9986;</div>
-          <div className={styles.ddayMessage}>첫 커트 기록을 남겨보세요!</div>
-        </div>
+
         <button className={styles.cutButton} onClick={() => addRecord(toDateString(new Date()))}>
-          &#9986; 오늘 커트했어요
+          오늘 커트했어요
         </button>
         <button className={styles.otherDateBtn} onClick={handleOpenDateModal}>
           다른 날짜에 했어요
         </button>
+
+        <BannerAd />
         {dateModal}
       </div>
     );
@@ -87,71 +111,72 @@ export default function MainPage() {
   const dday = calculateDday(lastCutDate, profile.cutCycleDays);
   const status = getDdayStatus(dday);
 
-  const characterMap = {
-    short: '🧑',
-    medium: '🧑‍🦱',
-    long: '👩‍🦱',
-  };
+  // 상태에 따라 얼굴 이미지 선택
+  const faceImage = dday <= 3 ? '/images/face.png' : '/images/face_smile.png';
 
   return (
     <div className={styles.container}>
+      {/* 헤더 */}
       <div className={styles.header}>
-        <div>
-          <div className={styles.greeting}>{profile.nickname}님</div>
-          <div className={styles.greetingSub}>오늘도 좋은 하루 되세요</div>
-        </div>
+        <div className={styles.headerLabel}>나의 커트 주기</div>
+        <h1 className={styles.headerTitle}>
+          커트한 지 <span className={styles.dayHighlight}>{daysSinceLastCut}일</span> 지났어요!
+        </h1>
       </div>
 
+      {/* 추천 팁 뱃지 */}
+      {cycleInfo && (
+        <div className={styles.tipBadge}>
+          <span className={styles.tipIcon}>{cycleInfo.icon}</span>
+          <span className={styles.tipText}>
+            {cycleInfo.label} 커트는 {cycleInfo.minWeeks}~{cycleInfo.maxWeeks}주 간격이 적절해요
+          </span>
+        </div>
+      )}
+
+      {/* D-Day 카드 */}
       <div className={styles.ddayCard}>
         <div className={styles.ddayNumber} style={{ color: status.color }}>
           {status.label}
         </div>
         <div className={styles.ddayMessage}>{status.message}</div>
-        <div className={styles.character}>{characterMap[profile.hairLength]}</div>
+        <div className={styles.character}>
+          <img src={faceImage} alt="캐릭터" />
+        </div>
       </div>
 
-      {dday <= 0 && (
-        <button className={styles.salonCta} onClick={() => navigate('/salon')}>
-          &#128136; 주변 미용실 찾기
-        </button>
-      )}
+      {/* 정보 카드 그리드 */}
+      <div className={styles.infoGrid}>
+        <div className={styles.infoCard}>
+          <span className={styles.infoIcon}>&#128197;</span>
+          <div className={styles.infoLabel}>마지막 커트</div>
+          <div className={styles.infoValue}>{formatDate(lastCutDate).replace(/\d+년 /, '')}</div>
+        </div>
 
+        <div className={styles.infoCard}>
+          <span className={styles.infoIcon}>&#128200;</span>
+          <div className={styles.infoLabel}>평균 주기</div>
+          <div className={styles.infoValue}>
+            {averageCycle !== null && averageCycle > 0 ? `${averageCycle}일` : '-'}
+          </div>
+        </div>
+
+        <div className={styles.infoCard}>
+          <span className={styles.infoIcon}>{cycleInfo.icon}</span>
+          <div className={styles.infoLabel}>권장 주기</div>
+          <div className={styles.infoValue}>{cycleInfo.minWeeks}~{cycleInfo.maxWeeks}주</div>
+        </div>
+      </div>
+
+      {/* 액션 버튼 */}
       <button className={styles.cutButton} onClick={() => addRecord(toDateString(new Date()))}>
-        &#9986; 오늘 커트했어요
+        오늘 커트했어요
       </button>
-
       <button className={styles.otherDateBtn} onClick={handleOpenDateModal}>
         다른 날짜에 했어요
       </button>
 
-      <div className={styles.infoCard}>
-        <span className={styles.infoIcon}>&#128197;</span>
-        <div>
-          <div className={styles.infoText}>마지막 커트</div>
-          <div className={styles.infoValue}>{formatDate(lastCutDate)}</div>
-        </div>
-      </div>
-
-      {averageCycle !== null && averageCycle > 0 && (
-        <div className={styles.infoCard}>
-          <span className={styles.infoIcon}>&#128200;</span>
-          <div>
-            <div className={styles.infoText}>평균 커트 주기</div>
-            <div className={styles.infoValue}>{averageCycle}일 (총 {records.length}회)</div>
-          </div>
-        </div>
-      )}
-
-      <div className={styles.infoCard}>
-        <span className={styles.infoIcon}>{hairCycleData[profile.hairLength].icon}</span>
-        <div>
-          <div className={styles.infoText}>{hairCycleData[profile.hairLength].label} 권장 주기</div>
-          <div className={styles.infoValue}>{getCycleRangeText(profile.hairLength)}</div>
-        </div>
-      </div>
-
       <BannerAd />
-
       {dateModal}
     </div>
   );

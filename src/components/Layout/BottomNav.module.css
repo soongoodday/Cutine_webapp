@@ -31,18 +31,19 @@
   min-width: 56px;
 }
 
-.navItem svg {
+.navIcon {
   width: 22px;
   height: 22px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.8;
+  object-fit: contain;
+  opacity: 0.45;
+  transition: opacity 0.2s, filter 0.2s;
 }
 
 .navItem.active {
-  color: var(--color-primary);
+  color: #FF8C42;
 }
 
-.navItem.active svg {
-  stroke: var(--color-primary);
+.navItem.active .navIcon {
+  opacity: 1;
+  filter: none;
 }
