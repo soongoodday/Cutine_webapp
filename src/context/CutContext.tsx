@@ -1,4 +1,4 @@
-import { createContext, useContext, useCallback } from 'react';
+import { createContext, useContext, useCallback, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { v4 as uuidv4 } from 'uuid';
@@ -58,26 +58,37 @@ export function CutProvider({ children }: { children: ReactNode }) {
     setRecords(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r));
   }, [setRecords]);
 
-  const sortedRecords = [...records].sort((a, b) => b.date.localeCompare(a.date));
-  const lastCutDate = sortedRecords.length > 0 ? sortedRecords[0].date : null;
+  const sortedRecords = useMemo(
+    () => [...records].sort((a, b) => b.date.localeCompare(a.date)),
+    [records]
+  );
 
-  let averageCycle: number | null = null;
-  if (sortedRecords.length >= 2) {
-    const first = new Date(sortedRecords[sortedRecords.length - 1].date);
-    const last = new Date(sortedRecords[0].date);
-    const totalDays = Math.abs((last.getTime() - first.getTime()) / (1000 * 60 * 60 * 24));
-    averageCycle = Math.round(totalDays / (sortedRecords.length - 1));
-  }
+  const lastCutDate = useMemo(
+    () => sortedRecords.length > 0 ? sortedRecords[0].date : null,
+    [sortedRecords]
+  );
+
+  const averageCycle = useMemo(() => {
+    if (sortedRecords.length >= 2) {
+      const first = new Date(sortedRecords[sortedRecords.length - 1].date);
+      const last = new Date(sortedRecords[0].date);
+      const totalDays = Math.abs((last.getTime() - first.getTime()) / (1000 * 60 * 60 * 24));
+      return Math.round(totalDays / (sortedRecords.length - 1));
+    }
+    return null;
+  }, [sortedRecords]);
+
+  const contextValue = useMemo(() => ({
+    records: sortedRecords,
+    addRecord,
+    removeRecord,
+    updateRecord,
+    lastCutDate,
+    averageCycle,
+  }), [sortedRecords, addRecord, removeRecord, updateRecord, lastCutDate, averageCycle]);
 
   return (
-    <CutContext.Provider value={{
-      records: sortedRecords,
-      addRecord,
-      removeRecord,
-      updateRecord,
-      lastCutDate,
-      averageCycle,
-    }}>
+    <CutContext.Provider value={contextValue}>
       {children}
     </CutContext.Provider>
   );

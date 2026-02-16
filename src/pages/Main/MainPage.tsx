@@ -10,7 +10,7 @@ import styles from './MainPage.module.css';
 export default function MainPage() {
   const navigate = useNavigate();
   const { profile, isOnboarded } = useUser();
-  const { lastCutDate, addRecord, averageCycle, records } = useCut();
+  const { lastCutDate, addRecord, removeRecord, averageCycle, records } = useCut();
   const [showDateModal, setShowDateModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(toDateString(new Date()));
 
@@ -28,6 +28,14 @@ export default function MainPage() {
   };
 
   const handleDateCut = () => {
+    // "다른 날짜에 했어요" → 오늘 날짜의 빈 기록(memo/salon/cost 없는)이 있으면 교체
+    const todayStr = toDateString(new Date());
+    if (selectedDate !== todayStr) {
+      const todayRecord = records.find(r => r.date === todayStr);
+      if (todayRecord && !todayRecord.memo && !todayRecord.salonName && !todayRecord.cost) {
+        removeRecord(todayRecord.id);
+      }
+    }
     addRecord(selectedDate);
     setShowDateModal(false);
   };
