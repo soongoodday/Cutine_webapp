@@ -100,7 +100,8 @@
 
 .tipDuration {
   font-size: var(--font-size-xs);
-  color: var(--color-text-tertiary);
+  color: #cc0000;
+  font-weight: 500;
 }
 
 .sectionTitle {

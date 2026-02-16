@@ -64,13 +64,15 @@ export default function TipsPage() {
           position: 'absolute',
           bottom: 4,
           right: 6,
-          fontSize: '10px',
-          color: 'rgba(255,255,255,0.9)',
-          background: 'rgba(0,0,0,0.5)',
-          padding: '1px 4px',
+          fontSize: '9px',
+          color: 'rgba(255,255,255,0.95)',
+          background: 'rgba(255,0,0,0.85)',
+          padding: '1px 5px',
           borderRadius: '2px',
+          fontWeight: 700,
+          letterSpacing: '0.3px',
         }}>
-          {tip.duration}
+          {'▶ YouTube'}
         </span>
       </div>
     );
@@ -91,7 +93,7 @@ export default function TipsPage() {
               <span className={styles.tipCategory}>
                 {categories.find(c => c.value === tip.category)?.label}
               </span>
-              <span className={styles.tipDuration}>{tip.duration}</span>
+              <span className={styles.tipDuration}>{'YouTube에서 검색 >'}</span>
             </div>
           </div>
         </div>
