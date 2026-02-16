@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useCut } from '../../context/CutContext';
-import { formatDate, toDateString } from '../../utils/date';
+import { useUser } from '../../context/UserContext';
+import { toDateString } from '../../utils/date';
+import { hairCycleData } from '../../data/hairCycle';
 import Calendar from '../../components/Calendar/Calendar';
-import BannerAd from '../../components/Ad/BannerAd';
 import styles from './RecordPage.module.css';
 
 export default function RecordPage() {
-  const { records, addRecord, removeRecord, averageCycle } = useCut();
+  const { records, addRecord, removeRecord, lastCutDate } = useCut();
+  const { profile } = useUser();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const cutDates = records.map(r => r.date);
@@ -14,7 +16,18 @@ export default function RecordPage() {
   const today = toDateString(new Date());
   const isFutureDate = selectedDate ? selectedDate > today : false;
 
-  const totalCost = records.reduce((sum, r) => sum + (r.cost || 0), 0);
+  // 커트한 지 N일 계산
+  const daysSinceLastCut = (() => {
+    if (!lastCutDate) return null;
+    const last = new Date(lastCutDate);
+    const now = new Date();
+    last.setHours(0, 0, 0, 0);
+    now.setHours(0, 0, 0, 0);
+    return Math.floor((now.getTime() - last.getTime()) / (1000 * 60 * 60 * 24));
+  })();
+
+  // 머리 길이별 추천 주기 팁
+  const cycleInfo = profile ? hairCycleData[profile.hairLength] : null;
 
   const handleAddRecord = () => {
     if (selectedDate && !isFutureDate) {
@@ -24,66 +37,80 @@ export default function RecordPage() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.pageTitle}>&#128197; 커트 기록</h1>
+      {/* 헤더 영역 */}
+      <div className={styles.header}>
+        <div className={styles.headerLabel}>나의 커트 캘린더</div>
+        {daysSinceLastCut !== null ? (
+          <h1 className={styles.headerTitle}>
+            커트한 지 <span className={styles.dayHighlight}>{daysSinceLastCut}일</span> 지났어요!
+          </h1>
+        ) : (
+          <h1 className={styles.headerTitle}>첫 커트를 기록해보세요!</h1>
+        )}
+      </div>
 
+      {/* 추천 팁 뱃지 */}
+      {cycleInfo && (
+        <div className={styles.tipBadge}>
+          <span className={styles.tipIcon}>{cycleInfo.icon}</span>
+          <span className={styles.tipText}>
+            {cycleInfo.label} 커트는 최소 {cycleInfo.minWeeks}주 ~ 최대 {cycleInfo.maxWeeks}주 사이가 적절해요
+          </span>
+        </div>
+      )}
+
+      {/* 범례 */}
+      <div className={styles.legend}>
+        <div className={styles.legendItem}>
+          <span className={`${styles.legendDot} ${styles.legendPast}`} />
+          <span className={styles.legendLabel}>지난 커트일</span>
+        </div>
+        <div className={styles.legendItem}>
+          <span className={`${styles.legendDot} ${styles.legendLatest}`} />
+          <span className={styles.legendLabel}>최근 커트일</span>
+        </div>
+      </div>
+
+      {/* 캘린더 */}
       <Calendar
         cutDates={cutDates}
+        latestCutDate={lastCutDate}
         selectedDate={selectedDate}
         onDateSelect={setSelectedDate}
       />
 
-      <div className={styles.stats}>
-        <div className={styles.statItem}>
-          <div className={styles.statValue}>{records.length}</div>
-          <div className={styles.statLabel}>총 횟수</div>
-        </div>
-        <div className={styles.statItem}>
-          <div className={styles.statValue}>{averageCycle || '-'}</div>
-          <div className={styles.statLabel}>평균 주기(일)</div>
-        </div>
-        <div className={styles.statItem}>
-          <div className={styles.statValue}>
-            {totalCost > 0 ? `${Math.round(totalCost / records.length / 1000)}K` : '-'}
-          </div>
-          <div className={styles.statLabel}>평균 비용</div>
-        </div>
-      </div>
-
+      {/* 선택된 날짜 상세 / 액션 */}
       {selectedRecord ? (
-        <div className={styles.recordDetail}>
-          <div className={styles.recordDate}>{formatDate(selectedRecord.date)}</div>
+        <div className={styles.selectedCard}>
+          <div className={styles.selectedHeader}>
+            <span className={styles.selectedIcon}>&#9986;</span>
+            <span className={styles.selectedDate}>
+              {new Date(selectedRecord.date + 'T00:00:00').toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </span>
+          </div>
           {selectedRecord.salonName && (
-            <div className={styles.recordMeta}>&#128136; {selectedRecord.salonName}</div>
+            <div className={styles.selectedMeta}>&#128136; {selectedRecord.salonName}</div>
           )}
-          {selectedRecord.cost && (
-            <div className={styles.recordMeta}>&#128176; {selectedRecord.cost.toLocaleString()}원</div>
+          {selectedRecord.cost != null && selectedRecord.cost > 0 && (
+            <div className={styles.selectedMeta}>&#128176; {selectedRecord.cost.toLocaleString()}원</div>
           )}
           {selectedRecord.memo && (
-            <div className={styles.recordMeta}>&#128221; {selectedRecord.memo}</div>
+            <div className={styles.selectedMeta}>&#128221; {selectedRecord.memo}</div>
           )}
-          <div className={styles.recordActions}>
-            <button className={styles.deleteBtn} onClick={() => {
-              removeRecord(selectedRecord.id);
-              setSelectedDate(null);
-            }}>
-              삭제
-            </button>
-          </div>
+          <button className={styles.deleteBtn} onClick={() => {
+            removeRecord(selectedRecord.id);
+            setSelectedDate(null);
+          }}>
+            기록 삭제
+          </button>
         </div>
-      ) : selectedDate ? (
-        <div className={styles.emptyState}>
-          <div>이 날짜에 기록이 없습니다</div>
-          {!isFutureDate && (
-            <button className={styles.addBtn} onClick={handleAddRecord}>
-              &#9986; 이 날짜에 커트 기록 추가
-            </button>
-          )}
-        </div>
-      ) : (
-        <div className={styles.emptyState}>날짜를 선택하여 기록을 확인하세요</div>
-      )}
-
-      <BannerAd size="medium" />
+      ) : selectedDate && !isFutureDate ? (
+        <button className={styles.saveBtn} onClick={handleAddRecord}>
+          저장하기
+        </button>
+      ) : selectedDate && isFutureDate ? (
+        <div className={styles.futureMsg}>미래 날짜는 기록할 수 없어요</div>
+      ) : null}
     </div>
   );
 }
