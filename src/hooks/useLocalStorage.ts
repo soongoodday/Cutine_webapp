@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 export function useLocalStorage<T>(key: string, initialValue: T, sanitize?: (value: T) => T): [T, (value: T | ((prev: T) => T)) => void] {
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -19,10 +19,25 @@ export function useLocalStorage<T>(key: string, initialValue: T, sanitize?: (val
     }
   });
 
+  // localStorage 동기화를 useEffect로 분리 (state updater 안에서 side effect 방지)
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    localStorage.setItem(key, JSON.stringify(storedValue));
+  }, [key, storedValue]);
+
   const setValue = useCallback((value: T | ((prev: T) => T)) => {
     setStoredValue(prev => {
       const nextValue = value instanceof Function ? value(prev) : value;
-      localStorage.setItem(key, JSON.stringify(nextValue));
+      // 즉시 localStorage에도 반영 (탭 전환 시 데이터 유실 방지)
+      try {
+        localStorage.setItem(key, JSON.stringify(nextValue));
+      } catch {
+        // localStorage 쓰기 실패 시 무시 (useEffect에서 재시도)
+      }
       return nextValue;
     });
   }, [key]);
