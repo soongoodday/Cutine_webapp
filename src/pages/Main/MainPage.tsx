@@ -13,6 +13,7 @@ export default function MainPage() {
   const { lastCutDate, addRecord, removeRecord, averageCycle, records } = useCut();
   const [showDateModal, setShowDateModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(toDateString(new Date()));
+  const [justCut, setJustCut] = useState(false);
 
   useEffect(() => {
     if (!isOnboarded) {
@@ -91,11 +92,12 @@ export default function MainPage() {
         <div className={styles.ddayCard}>
           <div className={styles.ddayMessage}>아래 버튼을 눌러 첫 기록을 남겨보세요!</div>
           <div className={styles.character}>
-            <img src="/images/face.png" alt="캐릭터" />
+            <img src="/images/face.png" alt="캐릭터" className={`${styles.faceImg} ${justCut ? styles.faceHidden : ''}`} />
+            <img src="/images/face_smile.png" alt="커트 완료" className={`${styles.faceImg} ${styles.faceSmile} ${justCut ? styles.faceVisible : ''}`} />
           </div>
         </div>
 
-        <button className={styles.cutButton} onClick={() => addRecord(toDateString(new Date()))}>
+        <button className={styles.cutButton} onClick={() => { setJustCut(true); addRecord(toDateString(new Date())); }}>
           오늘 커트했어요
         </button>
         <button className={styles.otherDateBtn} onClick={handleOpenDateModal}>
@@ -110,9 +112,6 @@ export default function MainPage() {
 
   const dday = calculateDday(lastCutDate, profile.cutCycleDays);
   const status = getDdayStatus(dday);
-
-  // 상태에 따라 얼굴 이미지 선택
-  const faceImage = dday <= 3 ? '/images/face.png' : '/images/face_smile.png';
 
   return (
     <div className={styles.container}>
@@ -141,7 +140,8 @@ export default function MainPage() {
         </div>
         <div className={styles.ddayMessage}>{status.message}</div>
         <div className={styles.character}>
-          <img src={faceImage} alt="캐릭터" />
+          <img src="/images/face.png" alt="캐릭터" className={`${styles.faceImg} ${justCut ? styles.faceHidden : ''}`} />
+          <img src="/images/face_smile.png" alt="커트 완료" className={`${styles.faceImg} ${styles.faceSmile} ${justCut ? styles.faceVisible : ''}`} />
         </div>
       </div>
 
@@ -169,7 +169,7 @@ export default function MainPage() {
       </div>
 
       {/* 액션 버튼 */}
-      <button className={styles.cutButton} onClick={() => addRecord(toDateString(new Date()))}>
+      <button className={styles.cutButton} onClick={() => { setJustCut(true); addRecord(toDateString(new Date())); }}>
         오늘 커트했어요
       </button>
       <button className={styles.otherDateBtn} onClick={handleOpenDateModal}>
