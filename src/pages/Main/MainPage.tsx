@@ -4,7 +4,6 @@ import { useUser } from '../../context/UserContext';
 import { useCut } from '../../context/CutContext';
 import { calculateDday, getDdayStatus, formatDate, toDateString } from '../../utils/date';
 import { hairCycleData } from '../../data/hairCycle';
-import BannerAd from '../../components/Ad/BannerAd';
 import styles from './MainPage.module.css';
 
 export default function MainPage() {
@@ -92,7 +91,7 @@ export default function MainPage() {
           <circle cx="12" cy="10" r="3" />
         </svg>
       </button>
-      <button className={styles.iconBtn} onClick={() => navigate('/settings')} aria-label="알림">
+      <button className={styles.iconBtn} onClick={() => navigate('/notifications')} aria-label="알림">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
           <path d="M13.73 21a2 2 0 0 1-3.46 0" />
@@ -135,7 +134,7 @@ export default function MainPage() {
           다른 날짜에 했어요
         </button>
 
-        <BannerAd />
+
         {dateModal}
       </div>
     );
@@ -159,11 +158,9 @@ export default function MainPage() {
 
       {/* 추천 팁 뱃지 */}
       {cycleInfo && (
-        <div className={styles.tipBadge}>
+        <div className={styles.tipBadge} key={tipIndex}>
           <span className={styles.tipIcon}>{cycleInfo.icon}</span>
-          <span className={styles.tipText}>
-            {cycleInfo.label} 커트는 {cycleInfo.minWeeks}~{cycleInfo.maxWeeks}주 간격이 적절해요
-          </span>
+          <span className={styles.tipText}>{currentTip}</span>
         </div>
       )}
 

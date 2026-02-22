@@ -1,0 +1,252 @@
+.container {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--color-bg);
+  padding: 0 20px 32px;
+}
+
+/* ===== 헤더 ===== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  margin-bottom: 8px;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.backBtn:active {
+  transform: scale(0.92);
+}
+
+.pageTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.headerSpacer {
+  width: 36px;
+}
+
+/* ===== D-Day 상태 카드 ===== */
+.statusCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.statusIcon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: var(--color-bg);
+}
+
+.statusInfo {
+  flex: 1;
+}
+
+.statusLabel {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.statusMessage {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* ===== 섹션 ===== */
+.sectionTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  padding: 0 4px;
+  margin-bottom: 8px;
+}
+
+.section {
+  background: var(--color-surface);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* ===== 알림 권한 ===== */
+.permissionCard {
+  padding: 20px;
+  text-align: center;
+}
+
+.permissionIcon {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.permissionText {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.permissionHint {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+
+.permissionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 16px;
+  background: #FF8C42;
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 14px;
+  transition: all 0.15s;
+}
+
+.permissionBtn:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+/* ===== 설정 아이템 ===== */
+.settingItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color-divider);
+  cursor: pointer;
+}
+
+.settingItem:last-child {
+  border-bottom: none;
+}
+
+.settingLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.settingLabel {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.settingDesc {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+
+.dayLabel {
+  font-size: 15px;
+  font-weight: 700;
+  color: #FF8C42;
+}
+
+/* ===== 토글 ===== */
+.toggle {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  background: var(--color-border);
+  border-radius: 14px;
+  transition: background 0.3s;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.toggle.active {
+  background: #FF8C42;
+}
+
+.toggleKnob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.toggle.active .toggleKnob {
+  transform: translateX(20px);
+}
+
+/* ===== 체크박스 ===== */
+.checkbox {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.checkbox.checked {
+  background: #FF8C42;
+  border-color: #FF8C42;
+}
+
+/* ===== 안내 카드 ===== */
+.infoCard {
+  display: flex;
+  gap: 10px;
+  padding: 14px 16px;
+  background: #FFF5ED;
+  border-radius: 12px;
+  border: 1px solid #FFE0C2;
+}
+
+.infoIcon {
+  font-size: 16px;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+.infoText {
+  font-size: 12px;
+  color: #8B5E3C;
+  line-height: 1.5;
+  font-weight: 500;
+}
