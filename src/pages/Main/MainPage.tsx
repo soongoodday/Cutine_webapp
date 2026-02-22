@@ -125,7 +125,7 @@ export default function MainPage() {
 
         <div className={styles.ddaySection}>
           <div className={styles.ddayMessage}>아래 버튼을 눌러 첫 기록을 남겨보세요!</div>
-          <div className={`${styles.character} ${justCut ? styles.characterCelebrate : ''}`}>
+          <div className={styles.character}>
             <img src={characterImg} alt="캐릭터" className={`${styles.faceImg} ${justCut ? styles.faceHidden : ''}`} />
             <img src={characterSmileImg} alt="커트 완료" className={`${styles.faceImg} ${styles.faceSmile} ${justCut ? styles.faceVisible : ''}`} />
           </div>
@@ -174,7 +174,7 @@ export default function MainPage() {
           {status.label}
         </div>
         <div className={styles.ddayMessage}>{status.message}</div>
-        <div className={`${styles.character} ${justCut ? styles.characterCelebrate : ''}`}>
+        <div className={styles.character}>
           <img src={characterImg} alt="캐릭터" className={`${styles.faceImg} ${justCut ? styles.faceHidden : ''}`} />
           <img src={characterSmileImg} alt="커트 완료" className={`${styles.faceImg} ${styles.faceSmile} ${justCut ? styles.faceVisible : ''}`} />
         </div>
