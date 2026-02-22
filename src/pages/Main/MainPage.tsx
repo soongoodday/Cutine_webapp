@@ -23,7 +23,6 @@ export default function MainPage() {
 
   if (!profile) return null;
 
-  // 커트한 지 N일 계산
   const daysSinceLastCut = (() => {
     if (!lastCutDate) return null;
     const last = new Date(lastCutDate);
@@ -71,13 +70,21 @@ export default function MainPage() {
     </div>
   );
 
-  const salonButton = (
-    <button className={styles.salonBtn} onClick={() => navigate('/salon')} aria-label="주변 미용실">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-        <circle cx="12" cy="10" r="3" />
-      </svg>
-    </button>
+  const headerIcons = (
+    <div className={styles.headerIcons}>
+      <button className={styles.iconBtn} onClick={() => navigate('/salon')} aria-label="주변 미용실">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+          <circle cx="12" cy="10" r="3" />
+        </svg>
+      </button>
+      <button className={styles.iconBtn} onClick={() => navigate('/settings')} aria-label="알림">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+      </button>
+    </div>
   );
 
   // 아직 커트 기록이 없는 경우
@@ -87,7 +94,7 @@ export default function MainPage() {
         <div className={styles.header}>
           <div className={styles.headerTop}>
             <div className={styles.headerLabel}>나의 커트 주기</div>
-            {salonButton}
+            {headerIcons}
           </div>
           <h1 className={styles.headerTitle}>첫 커트를 기록해보세요!</h1>
         </div>
@@ -101,7 +108,7 @@ export default function MainPage() {
           </div>
         )}
 
-        <div className={styles.ddayCard}>
+        <div className={styles.ddaySection}>
           <div className={styles.ddayMessage}>아래 버튼을 눌러 첫 기록을 남겨보세요!</div>
           <div className={styles.character}>
             <img src="/images/face.png" alt="캐릭터" className={`${styles.faceImg} ${justCut ? styles.faceHidden : ''}`} />
@@ -131,7 +138,7 @@ export default function MainPage() {
       <div className={styles.header}>
         <div className={styles.headerTop}>
           <div className={styles.headerLabel}>나의 커트 주기</div>
-          {salonButton}
+          {headerIcons}
         </div>
         <h1 className={styles.headerTitle}>
           커트한 지 <span className={styles.dayHighlight}>{daysSinceLastCut}일</span> 지났어요!
@@ -148,8 +155,8 @@ export default function MainPage() {
         </div>
       )}
 
-      {/* D-Day 카드 */}
-      <div className={styles.ddayCard}>
+      {/* D-Day 섹션 */}
+      <div className={styles.ddaySection}>
         <div className={styles.ddayNumber} style={{ color: status.color }}>
           {status.label}
         </div>
