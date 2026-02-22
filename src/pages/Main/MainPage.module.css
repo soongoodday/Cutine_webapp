@@ -115,8 +115,9 @@
 
 .character {
   position: relative;
-  width: 240px;
-  height: 240px;
+  width: 65vw;
+  max-width: 300px;
+  aspect-ratio: 1;
   margin: 0 auto;
   animation: float 3s ease-in-out infinite;
 }

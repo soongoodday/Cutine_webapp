@@ -48,8 +48,8 @@ export default function MainPage() {
   const cycleInfo = hairCycleData[profile.hairLength];
 
   // 머리 길이별 캐릭터 이미지
-  const characterImg = profile.hairLength === 'short' ? '/images/short.png' : '/images/face.png';
-  const characterSmileImg = profile.hairLength === 'short' ? '/images/short_smile.png' : '/images/face_smile.png';
+  const characterImg = `/images/${profile.hairLength}.png`;
+  const characterSmileImg = `/images/${profile.hairLength}_smile.png`;
 
   const handleOpenDateModal = () => {
     setSelectedDate(toDateString(new Date()));
