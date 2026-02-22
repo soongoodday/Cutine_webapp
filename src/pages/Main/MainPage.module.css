@@ -115,9 +115,8 @@
 
 .character {
   position: relative;
-  width: 65vw;
-  max-width: 300px;
-  aspect-ratio: 1;
+  width: 150px;
+  height: 180px;
   margin: 0 auto;
   animation: float 3s ease-in-out infinite;
 }
@@ -131,6 +130,8 @@
   object-fit: contain;
   transition: opacity 0.6s ease-in-out;
   opacity: 1;
+  /* 이미지 색상을 앱 테마(#FF8C42)로 통일 */
+  filter: brightness(0) saturate(100%) invert(56%) sepia(93%) saturate(1352%) hue-rotate(344deg) brightness(101%) contrast(101%);
 }
 
 .faceSmile {
