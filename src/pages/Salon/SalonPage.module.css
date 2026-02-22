@@ -5,12 +5,35 @@
 }
 
 .header {
-  padding: var(--space-xl) var(--space-lg) var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.backBtn:active {
+  transform: scale(0.92);
 }
 
 .pageTitle {
-  font-size: var(--font-size-xl);
+  font-size: 18px;
   font-weight: 700;
+}
+
+.headerSpacer {
+  width: 36px;
 }
 
 .partnerBanner {

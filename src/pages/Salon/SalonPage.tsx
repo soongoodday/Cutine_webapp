@@ -149,7 +149,13 @@ export default function SalonPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.pageTitle}>&#128136; 주변 미용실</h1>
+        <button className={styles.backBtn} onClick={() => navigate(-1)}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <h1 className={styles.pageTitle}>주변 미용실</h1>
+        <div className={styles.headerSpacer} />
       </div>
 
       <div className={styles.partnerBanner} onClick={() => navigate('/salon/partner')}>

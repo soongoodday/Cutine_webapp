@@ -179,13 +179,11 @@ export default function MainPage() {
       {/* 정보 카드 그리드 */}
       <div className={styles.infoGrid}>
         <div className={styles.infoCard}>
-          <span className={styles.infoIcon}>&#128197;</span>
           <div className={styles.infoLabel}>마지막 커트</div>
           <div className={styles.infoValue}>{formatDate(lastCutDate).replace(/\d+년 /, '')}</div>
         </div>
 
         <div className={styles.infoCard}>
-          <span className={styles.infoIcon}>&#128200;</span>
           <div className={styles.infoLabel}>평균 주기</div>
           <div className={styles.infoValue}>
             {averageCycle !== null && averageCycle > 0 ? `${averageCycle}일` : '-'}
@@ -193,7 +191,6 @@ export default function MainPage() {
         </div>
 
         <div className={styles.infoCard}>
-          <span className={styles.infoIcon}>{cycleInfo.icon}</span>
           <div className={styles.infoLabel}>권장 주기</div>
           <div className={styles.infoValue}>{cycleInfo.minWeeks}~{cycleInfo.maxWeeks}주</div>
         </div>
