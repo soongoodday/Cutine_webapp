@@ -30,9 +30,14 @@ const categoryColors: Record<string, string> = {
 
 export default function TipsPage() {
   const [filter, setFilter] = useState<Category>('all');
+  const [search, setSearch] = useState('');
   const { profile } = useUser();
 
-  const filteredTips = filter === 'all' ? tips : tips.filter(t => t.category === filter);
+  const filteredTips = tips.filter(t => {
+    const matchCategory = filter === 'all' || t.category === filter;
+    const matchSearch = search === '' || t.title.toLowerCase().includes(search.toLowerCase());
+    return matchCategory && matchSearch;
+  });
 
   const recommendedProducts = useMemo(() => {
     if (!profile) return products;
@@ -93,7 +98,28 @@ export default function TipsPage() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.pageTitle}>{'\uD83D\uDCA1'} 헤어 팁</h1>
+      <h1 className={styles.pageTitle}>{'\uD83D\uDCA1'} 헤어 관련 팁 영상</h1>
+
+      <div className={styles.searchBar}>
+        <svg className={styles.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input
+          type="text"
+          className={styles.searchInput}
+          placeholder="검색어를 입력해주세요"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+        {search && (
+          <button className={styles.searchClear} onClick={() => setSearch('')}>
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+              <path d="M18.3 5.71a1 1 0 00-1.41 0L12 10.59 7.11 5.7A1 1 0 105.7 7.11L10.59 12 5.7 16.89a1 1 0 101.41 1.41L12 13.41l4.89 4.89a1 1 0 001.41-1.41L13.41 12l4.89-4.89a1 1 0 000-1.4z" />
+            </svg>
+          </button>
+        )}
+      </div>
 
       <div className={styles.filters}>
         {categories.map(cat => (
