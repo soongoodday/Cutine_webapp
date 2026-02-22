@@ -207,7 +207,6 @@ export default function MainPage() {
         다른 날짜에 했어요
       </button>
 
-      <BannerAd />
       {dateModal}
     </div>
   );

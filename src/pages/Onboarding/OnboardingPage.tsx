@@ -140,7 +140,7 @@ export default function OnboardingPage() {
                   {getCycleRangeText(hairLength as 'short' | 'medium' | 'long')}
                 </div>
                 <div className={styles.cycleRecommendTip}>
-                  {selectedCycleData.tip}
+                  {selectedCycleData.tips[0]}
                 </div>
               </div>
             )}
