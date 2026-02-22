@@ -139,8 +139,7 @@
   transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
   opacity: 1;
   transform: scale(1);
-  /* 캐릭터 이미지 색상 통일 (#2B3A55 네이비) */
-  filter: brightness(0) saturate(100%) invert(21%) sepia(15%) saturate(1200%) hue-rotate(182deg) brightness(95%) contrast(92%);
+  /* 이미지 흰 배경이므로 CSS 필터 대신 원본 색상 유지 */
 }
 
 .faceSmile {
