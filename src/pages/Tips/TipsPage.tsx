@@ -8,12 +8,20 @@ import type { Tip } from '../../types';
 import styles from './TipsPage.module.css';
 
 type Category = 'all' | Tip['category'];
+type SortOrder = 'latest' | 'popular';
+
+const TIPS_PER_PAGE = 4;
 
 const categories: { value: Category; label: string }[] = [
   { value: 'all', label: '전체' },
   { value: 'dry', label: '드라이' },
   { value: 'style', label: '스타일링' },
   { value: 'care', label: '케어' },
+];
+
+const sortOptions: { value: SortOrder; label: string }[] = [
+  { value: 'latest', label: '최신순' },
+  { value: 'popular', label: '인기순' },
 ];
 
 const categoryIcons: Record<string, string> = {
@@ -31,13 +39,31 @@ const categoryColors: Record<string, string> = {
 export default function TipsPage() {
   const [filter, setFilter] = useState<Category>('all');
   const [search, setSearch] = useState('');
+  const [sort, setSort] = useState<SortOrder>('latest');
+  const [visibleCount, setVisibleCount] = useState(TIPS_PER_PAGE);
   const { profile } = useUser();
 
-  const filteredTips = tips.filter(t => {
-    const matchCategory = filter === 'all' || t.category === filter;
-    const matchSearch = search === '' || t.title.toLowerCase().includes(search.toLowerCase());
-    return matchCategory && matchSearch;
-  });
+  const filteredTips = useMemo(() => {
+    const filtered = tips.filter(t => {
+      const matchCategory = filter === 'all' || t.category === filter;
+      const matchSearch = search === '' || t.title.toLowerCase().includes(search.toLowerCase());
+      return matchCategory && matchSearch;
+    });
+    const sorted = [...filtered];
+    if (sort === 'latest') {
+      sorted.sort((a, b) => Number(b.id) - Number(a.id));
+    }
+    return sorted;
+  }, [filter, search, sort]);
+
+  const visibleTips = filteredTips.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredTips.length;
+
+  // 필터/검색 변경 시 보이는 개수 리셋
+  const handleFilterChange = (cat: Category) => {
+    setFilter(cat);
+    setVisibleCount(TIPS_PER_PAGE);
+  };
 
   const recommendedProducts = useMemo(() => {
     if (!profile) return products;
@@ -79,7 +105,7 @@ export default function TipsPage() {
     const items: React.JSX.Element[] = [];
     let productIndex = 0;
 
-    filteredTips.forEach((tip, i) => {
+    visibleTips.forEach((tip, i) => {
       items.push(renderTipCard(tip));
 
       if ((i + 1) % 4 === 0 && productIndex < recommendedProducts.length) {
@@ -121,21 +147,46 @@ export default function TipsPage() {
         )}
       </div>
 
-      <div className={styles.filters}>
-        {categories.map(cat => (
-          <button
-            key={cat.value}
-            className={`${styles.filterBtn} ${filter === cat.value ? styles.active : ''}`}
-            onClick={() => setFilter(cat.value)}
-          >
-            {cat.label}
-          </button>
-        ))}
+      <div className={styles.filterRow}>
+        <div className={styles.filters}>
+          {categories.map(cat => (
+            <button
+              key={cat.value}
+              className={`${styles.filterBtn} ${filter === cat.value ? styles.active : ''}`}
+              onClick={() => handleFilterChange(cat.value)}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+        <div className={styles.sortWrap}>
+          {sortOptions.map(opt => (
+            <button
+              key={opt.value}
+              className={`${styles.sortBtn} ${sort === opt.value ? styles.sortActive : ''}`}
+              onClick={() => setSort(opt.value)}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className={styles.list}>
         {renderList()}
       </div>
+
+      {hasMore && (
+        <button
+          className={styles.loadMoreBtn}
+          onClick={() => setVisibleCount(prev => prev + TIPS_PER_PAGE)}
+        >
+          더보기
+          <svg className={styles.loadMoreIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+      )}
 
       <div className={styles.bannerWrap}>
         <BannerAd />
