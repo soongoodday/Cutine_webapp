@@ -47,6 +47,10 @@ export default function MainPage() {
 
   const cycleInfo = hairCycleData[profile.hairLength];
 
+  // 머리 길이별 캐릭터 이미지
+  const characterImg = profile.hairLength === 'short' ? '/images/short.png' : '/images/face.png';
+  const characterSmileImg = profile.hairLength === 'short' ? '/images/short_smile.png' : '/images/face_smile.png';
+
   const handleOpenDateModal = () => {
     setSelectedDate(toDateString(new Date()));
     setShowDateModal(true);
@@ -122,8 +126,8 @@ export default function MainPage() {
         <div className={styles.ddaySection}>
           <div className={styles.ddayMessage}>아래 버튼을 눌러 첫 기록을 남겨보세요!</div>
           <div className={styles.character}>
-            <img src="/images/face.png" alt="캐릭터" className={`${styles.faceImg} ${justCut ? styles.faceHidden : ''}`} />
-            <img src="/images/face_smile.png" alt="커트 완료" className={`${styles.faceImg} ${styles.faceSmile} ${justCut ? styles.faceVisible : ''}`} />
+            <img src={characterImg} alt="캐릭터" className={`${styles.faceImg} ${justCut ? styles.faceHidden : ''}`} />
+            <img src={characterSmileImg} alt="커트 완료" className={`${styles.faceImg} ${styles.faceSmile} ${justCut ? styles.faceVisible : ''}`} />
           </div>
         </div>
 
@@ -171,8 +175,8 @@ export default function MainPage() {
         </div>
         <div className={styles.ddayMessage}>{status.message}</div>
         <div className={styles.character}>
-          <img src="/images/face.png" alt="캐릭터" className={`${styles.faceImg} ${justCut ? styles.faceHidden : ''}`} />
-          <img src="/images/face_smile.png" alt="커트 완료" className={`${styles.faceImg} ${styles.faceSmile} ${justCut ? styles.faceVisible : ''}`} />
+          <img src={characterImg} alt="캐릭터" className={`${styles.faceImg} ${justCut ? styles.faceHidden : ''}`} />
+          <img src={characterSmileImg} alt="커트 완료" className={`${styles.faceImg} ${styles.faceSmile} ${justCut ? styles.faceVisible : ''}`} />
         </div>
       </div>
 
