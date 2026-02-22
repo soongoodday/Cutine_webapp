@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 import { tips } from '../../data/tips';
 import { products } from '../../data/products';
 import { useUser } from '../../context/UserContext';
@@ -30,7 +30,6 @@ const categoryColors: Record<string, string> = {
 
 export default function TipsPage() {
   const [filter, setFilter] = useState<Category>('all');
-  const [playImgLoaded, setPlayImgLoaded] = useState(true);
   const { profile } = useUser();
 
   const filteredTips = filter === 'all' ? tips : tips.filter(t => t.category === filter);
@@ -44,28 +43,24 @@ export default function TipsPage() {
     window.open(tip.videoUrl, '_blank', 'noopener');
   };
 
-  const handlePlayImgError = useCallback(() => {
-    setPlayImgLoaded(false);
-  }, []);
-
   const renderTipCard = (tip: Tip) => (
     <div key={tip.id} className={styles.tipCard} onClick={() => handleTipClick(tip)}>
-      <div
-        className={styles.tipThumbWrap}
-        style={{ background: categoryColors[tip.category] || categoryColors.care }}
-      >
+      <div className={styles.tipThumbWrap}>
+        {tip.thumbnail ? (
+          <img className={styles.thumbImg} src={tip.thumbnail} alt={tip.title} />
+        ) : (
+          <div
+            className={styles.thumbPlaceholder}
+            style={{ background: categoryColors[tip.category] || categoryColors.care }}
+          />
+        )}
         <span className={styles.categoryIcon}>
           {categoryIcons[tip.category] || ''}
         </span>
-        <div className={`${styles.playBtn} ${playImgLoaded ? styles.hasImage : ''}`}>
-          {playImgLoaded && (
-            <img
-              className={styles.playImg}
-              src="/images/play.png"
-              alt=""
-              onError={handlePlayImgError}
-            />
-          )}
+        <div className={styles.playBtn}>
+          <svg className={styles.playSvg} viewBox="0 0 24 24" fill="white">
+            <path d="M8 5v14l11-7z" />
+          </svg>
         </div>
       </div>
       <div className={styles.tipInfo}>

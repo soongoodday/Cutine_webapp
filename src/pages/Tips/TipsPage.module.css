@@ -74,9 +74,29 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  background: #e8e8e8;
 }
 
-/* Play button (orange circle + white triangle fallback) */
+/* Actual thumbnail image */
+.thumbImg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Gradient placeholder when no thumbnail */
+.thumbPlaceholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Play button (orange circle + SVG icon) */
 .playBtn {
   position: absolute;
   top: 50%;
@@ -93,30 +113,10 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 
-/* CSS triangle play icon (fallback when play.png is absent) */
-.playBtn::after {
-  content: '';
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 7px 0 7px 13px;
-  border-color: transparent transparent transparent white;
-  margin-left: 3px;
-}
-
-/* When play.png is present, hide the CSS triangle */
-.playBtn.hasImage::after {
-  display: none;
-}
-
-.playImg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 50%;
+.playSvg {
+  width: 18px;
+  height: 18px;
+  margin-left: 2px;
 }
 
 /* Category icon subtle watermark */
