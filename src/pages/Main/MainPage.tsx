@@ -14,6 +14,7 @@ export default function MainPage() {
   const [showDateModal, setShowDateModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(toDateString(new Date()));
   const [justCut, setJustCut] = useState(false);
+  const [tipIndex, setTipIndex] = useState(() => Math.floor(Math.random() * 6));
 
   useEffect(() => {
     if (!isOnboarded) {
@@ -21,7 +22,20 @@ export default function MainPage() {
     }
   }, [isOnboarded, navigate]);
 
+  // 10초마다 팁 회전
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTipIndex(prev => {
+        const tipsLength = profile ? hairCycleData[profile.hairLength].tips.length : 6;
+        return (prev + 1) % tipsLength;
+      });
+    }, 10000);
+    return () => clearInterval(timer);
+  }, [profile]);
+
   if (!profile) return null;
+
+  const currentTip = hairCycleData[profile.hairLength].tips[tipIndex % hairCycleData[profile.hairLength].tips.length];
 
   const daysSinceLastCut = (() => {
     if (!lastCutDate) return null;
@@ -100,11 +114,9 @@ export default function MainPage() {
         </div>
 
         {cycleInfo && (
-          <div className={styles.tipBadge}>
+          <div className={styles.tipBadge} key={tipIndex}>
             <span className={styles.tipIcon}>{cycleInfo.icon}</span>
-            <span className={styles.tipText}>
-              {cycleInfo.label} 커트는 {cycleInfo.minWeeks}~{cycleInfo.maxWeeks}주 간격이 적절해요
-            </span>
+            <span className={styles.tipText}>{currentTip}</span>
           </div>
         )}
 
