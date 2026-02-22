@@ -71,12 +71,24 @@ export default function MainPage() {
     </div>
   );
 
+  const salonButton = (
+    <button className={styles.salonBtn} onClick={() => navigate('/salon')} aria-label="주변 미용실">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+        <circle cx="12" cy="10" r="3" />
+      </svg>
+    </button>
+  );
+
   // 아직 커트 기록이 없는 경우
   if (!lastCutDate) {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
-          <div className={styles.headerLabel}>나의 커트 주기</div>
+          <div className={styles.headerTop}>
+            <div className={styles.headerLabel}>나의 커트 주기</div>
+            {salonButton}
+          </div>
           <h1 className={styles.headerTitle}>첫 커트를 기록해보세요!</h1>
         </div>
 
@@ -117,7 +129,10 @@ export default function MainPage() {
     <div className={styles.container}>
       {/* 헤더 */}
       <div className={styles.header}>
-        <div className={styles.headerLabel}>나의 커트 주기</div>
+        <div className={styles.headerTop}>
+          <div className={styles.headerLabel}>나의 커트 주기</div>
+          {salonButton}
+        </div>
         <h1 className={styles.headerTitle}>
           커트한 지 <span className={styles.dayHighlight}>{daysSinceLastCut}일</span> 지났어요!
         </h1>
