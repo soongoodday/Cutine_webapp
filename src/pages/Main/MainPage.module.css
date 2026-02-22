@@ -115,10 +115,15 @@
 
 .character {
   position: relative;
-  width: 150px;
-  height: 180px;
+  width: 160px;
+  height: 190px;
   margin: 0 auto;
   animation: float 3s ease-in-out infinite;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.characterCelebrate {
+  animation: celebrate 0.6s ease-out;
 }
 
 .faceImg {
@@ -130,8 +135,8 @@
   object-fit: contain;
   transition: opacity 0.6s ease-in-out;
   opacity: 1;
-  /* 이미지 색상을 앱 테마(#FF8C42)로 통일 */
-  filter: brightness(0) saturate(100%) invert(56%) sepia(93%) saturate(1352%) hue-rotate(344deg) brightness(101%) contrast(101%);
+  /* 옅은 네이비 — 하단 메뉴바(#2B3A55) 계열 밝은 변형 */
+  filter: brightness(0) saturate(100%) invert(28%) sepia(15%) saturate(800%) hue-rotate(185deg) brightness(105%) contrast(90%);
 }
 
 .faceSmile {
@@ -149,6 +154,17 @@
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
+}
+
+/* 커트 완료 축하 애니메이션 */
+@keyframes celebrate {
+  0% { transform: scale(1) rotate(0deg); }
+  15% { transform: scale(1.15) rotate(-3deg); }
+  30% { transform: scale(1.15) rotate(3deg); }
+  45% { transform: scale(1.1) rotate(-2deg); }
+  60% { transform: scale(1.1) rotate(2deg); }
+  80% { transform: scale(1.05) rotate(0deg); }
+  100% { transform: scale(1) rotate(0deg); }
 }
 
 /* ===== 정보 카드 그리드 ===== */
