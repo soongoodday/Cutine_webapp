@@ -116,7 +116,7 @@
 .character {
   position: relative;
   width: 160px;
-  height: 190px;
+  height: 181px;
   margin: 0 auto;
   animation: float 3s ease-in-out infinite;
 }
@@ -130,6 +130,8 @@
   object-fit: contain;
   transition: opacity 0.6s ease-in-out;
   opacity: 1;
+  /* #2B3A55 계열 네이비로 통일 */
+  filter: brightness(0) saturate(100%) invert(21%) sepia(15%) saturate(1200%) hue-rotate(182deg) brightness(95%) contrast(92%);
 }
 
 .faceSmile {
