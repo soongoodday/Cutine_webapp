@@ -4,11 +4,13 @@
   background: var(--color-bg);
   padding: 24px 20px;
   padding-bottom: calc(var(--bottom-nav-height) + 32px);
+  display: flex;
+  flex-direction: column;
 }
 
 /* ===== 헤더 ===== */
 .header {
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .headerTop {
@@ -70,7 +72,7 @@
   border: 1px solid #FFE0C2;
   border-radius: 999px;
   padding: 10px 16px;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
   animation: tipFadeIn 0.5s ease-out;
 }
 
@@ -94,31 +96,37 @@
 /* ===== D-Day 섹션 (카드 없이 오픈) ===== */
 .ddaySection {
   text-align: center;
-  padding: 20px 0 28px;
-  margin-bottom: 20px;
+  padding: 12px 0 16px;
+  margin-bottom: 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
 }
 
 .ddayNumber {
-  font-size: 72px;
+  font-size: clamp(48px, 10vw, 72px);
   font-weight: 900;
   letter-spacing: -3px;
   line-height: 1;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .ddayMessage {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--color-text-secondary);
   font-weight: 500;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 }
 
 .character {
   position: relative;
-  width: 160px;
-  height: 181px;
+  width: clamp(100px, 22vw, 160px);
+  aspect-ratio: 160 / 181;
   margin: 0 auto;
   animation: float 3s ease-in-out infinite;
+  flex-shrink: 1;
 }
 
 .faceImg {
@@ -157,7 +165,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .infoCard {
