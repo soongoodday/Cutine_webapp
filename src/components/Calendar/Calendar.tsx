@@ -7,11 +7,12 @@ interface CalendarProps {
   latestCutDate?: string | null;
   selectedDate?: string | null;
   onDateSelect?: (date: string) => void;
+  maxDate?: string;
 }
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
-export default function Calendar({ cutDates, latestCutDate, selectedDate, onDateSelect }: CalendarProps) {
+export default function Calendar({ cutDates, latestCutDate, selectedDate, onDateSelect, maxDate }: CalendarProps) {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -19,6 +20,11 @@ export default function Calendar({ cutDates, latestCutDate, selectedDate, onDate
   const daysInMonth = getDaysInMonth(year, month);
   const firstDay = getFirstDayOfMonth(year, month);
   const todayStr = toDateString(today);
+
+  // 이전 달 정보
+  const prevMonth = month === 0 ? 11 : month - 1;
+  const prevYear = month === 0 ? year - 1 : year;
+  const daysInPrevMonth = getDaysInMonth(prevYear, prevMonth);
 
   const goPrev = () => {
     if (month === 0) {
@@ -37,6 +43,27 @@ export default function Calendar({ cutDates, latestCutDate, selectedDate, onDate
       setMonth(month + 1);
     }
   };
+
+  // 이전 달 빈 칸 채우기
+  const prevDays = Array.from({ length: firstDay }).map((_, i) => {
+    const day = daysInPrevMonth - firstDay + 1 + i;
+    return (
+      <div key={`prev-${i}`} className={`${styles.dayCell} ${styles.otherMonth}`}>
+        <span className={styles.dayNum}>{day}</span>
+      </div>
+    );
+  });
+
+  // 다음 달 빈 칸 채우기
+  const totalCells = firstDay + daysInMonth;
+  const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  const nextDays = Array.from({ length: remainingCells }).map((_, i) => {
+    return (
+      <div key={`next-${i}`} className={`${styles.dayCell} ${styles.otherMonth}`}>
+        <span className={styles.dayNum}>{i + 1}</span>
+      </div>
+    );
+  });
 
   return (
     <div className={styles.calendar}>
@@ -57,9 +84,7 @@ export default function Calendar({ cutDates, latestCutDate, selectedDate, onDate
       </div>
 
       <div className={styles.days}>
-        {Array.from({ length: firstDay }).map((_, i) => (
-          <div key={`empty-${i}`} className={styles.dayCell} />
-        ))}
+        {prevDays}
 
         {Array.from({ length: daysInMonth }).map((_, i) => {
           const day = i + 1;
@@ -69,6 +94,7 @@ export default function Calendar({ cutDates, latestCutDate, selectedDate, onDate
           const isPastCut = cutDates.includes(dateStr) && !isLatestCut;
           const isSelected = dateStr === selectedDate;
           const isSunday = (firstDay + i) % 7 === 0;
+          const isDisabled = maxDate ? dateStr > maxDate : false;
 
           const classes = [
             styles.dayCell,
@@ -78,14 +104,22 @@ export default function Calendar({ cutDates, latestCutDate, selectedDate, onDate
             isPastCut ? styles.pastCut : '',
             isSelected ? styles.selected : '',
             isSunday ? styles.sundayDay : '',
+            isDisabled ? styles.disabled : '',
           ].filter(Boolean).join(' ');
 
           return (
-            <button key={day} className={classes} onClick={() => onDateSelect?.(dateStr)}>
+            <button
+              key={day}
+              className={classes}
+              onClick={() => !isDisabled && onDateSelect?.(dateStr)}
+              disabled={isDisabled}
+            >
               <span className={styles.dayNum}>{day}</span>
             </button>
           );
         })}
+
+        {nextDays}
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { useUser } from '../../context/UserContext';
 import { useCut } from '../../context/CutContext';
 import { calculateDday, getDdayStatus, formatDate, toDateString } from '../../utils/date';
 import { hairCycleData } from '../../data/hairCycle';
+import Calendar from '../../components/Calendar/Calendar';
 import styles from './MainPage.module.css';
 
 export default function MainPage() {
@@ -51,13 +52,16 @@ export default function MainPage() {
   const characterImg = `/images/${profile.hairLength}.png`;
   const characterSmileImg = `/images/${profile.hairLength}_smile.png`;
 
+  const todayStr = toDateString(new Date());
+  const cutDates = records.map(r => r.date);
+
   const handleOpenDateModal = () => {
-    setSelectedDate(toDateString(new Date()));
+    setSelectedDate('');
     setShowDateModal(true);
   };
 
   const handleDateCut = () => {
-    const todayStr = toDateString(new Date());
+    if (!selectedDate) return;
     if (selectedDate !== todayStr) {
       const todayRecord = records.find(r => r.date === todayStr);
       if (todayRecord && !todayRecord.memo && !todayRecord.salonName && !todayRecord.cost) {
@@ -68,21 +72,59 @@ export default function MainPage() {
     setShowDateModal(false);
   };
 
+  const formatSelectedDate = (dateStr: string) => {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+  };
+
   const dateModal = showDateModal && (
     <div className={styles.modal} onClick={() => setShowDateModal(false)}>
       <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-        <h3 className={styles.modalTitle}>커트한 날짜 선택</h3>
-        <input
-          className={styles.modalDateInput}
-          type="date"
-          value={selectedDate}
-          onChange={e => setSelectedDate(e.target.value)}
-          max={toDateString(new Date())}
-        />
-        <div className={styles.modalActions}>
-          <button className={styles.modalCancel} onClick={() => setShowDateModal(false)}>취소</button>
-          <button className={styles.modalConfirm} onClick={handleDateCut}>기록하기</button>
+        <button className={styles.modalClose} onClick={() => setShowDateModal(false)}>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M14 4L4 14M4 4l10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+          <span>닫기</span>
+        </button>
+
+        <h3 className={styles.modalTitle}>커트하신 날짜를 선택해주세요</h3>
+
+        <div className={styles.modalDateDisplay}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span className={selectedDate ? styles.dateText : styles.datePlaceholder}>
+            {selectedDate ? formatSelectedDate(selectedDate) : '날짜를 선택해주세요...'}
+          </span>
+          {selectedDate && (
+            <button className={styles.dateClear} onClick={() => setSelectedDate('')}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="7" fill="#ddd"/>
+                <path d="M5.5 5.5l5 5M10.5 5.5l-5 5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </button>
+          )}
         </div>
+
+        <Calendar
+          cutDates={cutDates}
+          latestCutDate={lastCutDate}
+          selectedDate={selectedDate}
+          onDateSelect={setSelectedDate}
+          maxDate={todayStr}
+        />
+
+        <button
+          className={`${styles.modalConfirm} ${!selectedDate ? styles.modalConfirmDisabled : ''}`}
+          onClick={handleDateCut}
+          disabled={!selectedDate}
+        >
+          커트하셨군요!
+        </button>
       </div>
     </div>
   );

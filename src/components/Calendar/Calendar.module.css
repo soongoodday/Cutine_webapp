@@ -94,6 +94,22 @@
   color: #FF6B6B;
 }
 
+/* 이전/다음 달 날짜 */
+.otherMonth .dayNum {
+  color: var(--color-text-tertiary);
+  opacity: 0.4;
+}
+
+/* 비활성 (미래 날짜) */
+.disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.disabled:active {
+  transform: none;
+}
+
 /* 오늘 */
 .today {
   background: var(--color-bg);
@@ -125,8 +141,8 @@
 
 /* 선택된 날짜 */
 .selected {
-  background: var(--color-primary);
-  box-shadow: 0 2px 8px rgba(108, 99, 255, 0.35);
+  background: #FF8C42;
+  box-shadow: 0 2px 8px rgba(255, 140, 66, 0.35);
 }
 
 .selected .dayNum {
