@@ -59,7 +59,7 @@ export default function SplashPage() {
       <div className={styles.logo}>
         <img
           className={styles.logoImg}
-          src="/images/logo.png"
+          src="/images/Cutine_logo.png"
           alt="Cutine"
         />
         <h1 className={styles.title}>Cutine</h1>
