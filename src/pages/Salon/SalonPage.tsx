@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BannerAd from '../../components/Ad/BannerAd';
 import type { Salon } from '../../types';
@@ -10,113 +10,238 @@ declare global {
   }
 }
 
-// 데모 데이터 (실제 배포 시 카카오 로컬 API + Firestore 제휴 데이터로 교체)
-const demoSalons: Salon[] = [
-  {
-    id: 's1',
-    name: '블루클럽 강남점',
-    address: '서울 강남구 역삼동 123-45',
-    phone: '02-1234-5678',
-    lat: 37.4979,
-    lng: 127.0276,
-    distance: 350,
-    rating: 4.5,
-    isPartner: true,
-  },
-  {
-    id: 's2',
-    name: '리안헤어 선릉점',
-    address: '서울 강남구 선릉로 67길 12',
-    phone: '02-9876-5432',
-    lat: 37.5045,
-    lng: 127.0489,
-    distance: 820,
-    rating: 4.2,
-    isPartner: false,
-  },
-  {
-    id: 's3',
-    name: '준오헤어 역삼점',
-    address: '서울 강남구 테헤란로 152',
-    phone: '02-5555-1234',
-    lat: 37.5012,
-    lng: 127.0396,
-    distance: 1200,
-    rating: 4.7,
-    isPartner: true,
-  },
-  {
-    id: 's4',
-    name: '이철헤어커커 삼성점',
-    address: '서울 강남구 삼성로 321',
-    phone: '02-3333-4444',
-    lat: 37.5089,
-    lng: 127.0620,
-    distance: 1500,
-    rating: 4.0,
-    isPartner: false,
-  },
-];
+type LocationState = 'loading' | 'granted' | 'denied' | 'error';
+
+function getDistanceFromLatLng(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371000;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c);
+}
 
 export default function SalonPage() {
   const navigate = useNavigate();
   const mapRef = useRef<HTMLDivElement>(null);
-  const [salons] = useState<Salon[]>(
-    [...demoSalons].sort((a, b) => {
-      if (a.isPartner && !b.isPartner) return -1;
-      if (!a.isPartner && b.isPartner) return 1;
-      return (a.distance || 0) - (b.distance || 0);
-    })
-  );
+  const mapInstanceRef = useRef<any>(null);
+  const markersRef = useRef<any[]>([]);
+  const myMarkerRef = useRef<any>(null);
 
-  useEffect(() => {
-    if (!mapRef.current) return;
-
-    const initMap = () => {
-      if (!mapRef.current) return;
-      const center = new window.kakao.maps.LatLng(37.5012, 127.0396);
-      const map = new window.kakao.maps.Map(mapRef.current, {
-        center,
-        level: 5,
-      });
-
-      salons.forEach((salon) => {
-        const marker = new window.kakao.maps.Marker({
-          position: new window.kakao.maps.LatLng(salon.lat, salon.lng),
-          map,
-        });
-
-        const infoContent = `<div style="padding:4px 8px;font-size:12px;white-space:nowrap;">${salon.name}${salon.isPartner ? ' <span style="color:#6C63FF;font-weight:700;">[제휴]</span>' : ''}</div>`;
-        const infowindow = new window.kakao.maps.InfoWindow({ content: infoContent });
-
-        window.kakao.maps.event.addListener(marker, 'click', () => {
-          infowindow.open(map, marker);
-        });
-      });
-    };
-
-    // SDK가 이미 로드된 경우
-    if (window.kakao?.maps) {
-      window.kakao.maps.load(initMap);
-      return;
-    }
-
-    // SDK가 아직 로드되지 않은 경우 대기
-    const checkKakao = setInterval(() => {
-      if (window.kakao?.maps) {
-        clearInterval(checkKakao);
-        window.kakao.maps.load(initMap);
-      }
-    }, 300);
-
-    return () => clearInterval(checkKakao);
-  }, [salons]);
+  const [salons, setSalons] = useState<Salon[]>([]);
+  const [locationState, setLocationState] = useState<LocationState>('loading');
+  const [myLat, setMyLat] = useState<number | null>(null);
+  const [myLng, setMyLng] = useState<number | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
+  const paginationRef = useRef<any>(null);
 
   const [bookingSalon, setBookingSalon] = useState<Salon | null>(null);
   const [bookingForm, setBookingForm] = useState({ name: '', phone: '', date: '', time: '', memo: '' });
   const [bookingSubmitted, setBookingSubmitted] = useState(false);
 
+  // 카카오맵 초기화
+  const initMap = useCallback((lat: number, lng: number) => {
+    if (!mapRef.current || !window.kakao?.maps) return;
+
+    const center = new window.kakao.maps.LatLng(lat, lng);
+    const map = new window.kakao.maps.Map(mapRef.current, {
+      center,
+      level: 4,
+    });
+    mapInstanceRef.current = map;
+
+    // 내 위치 마커
+    const myMarkerImage = new window.kakao.maps.MarkerImage(
+      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png',
+      new window.kakao.maps.Size(24, 35)
+    );
+    const myMarker = new window.kakao.maps.Marker({
+      position: center,
+      map,
+      image: myMarkerImage,
+      zIndex: 10,
+    });
+    myMarkerRef.current = myMarker;
+
+    const myInfoContent = '<div style="padding:4px 8px;font-size:12px;white-space:nowrap;font-weight:700;color:#6C63FF;">내 위치</div>';
+    const myInfoWindow = new window.kakao.maps.InfoWindow({ content: myInfoContent });
+    myInfoWindow.open(map, myMarker);
+
+    return map;
+  }, []);
+
+  // 미용실 검색
+  const searchSalons = useCallback((map: any, lat: number, lng: number) => {
+    if (!window.kakao?.maps?.services) return;
+
+    setIsSearching(true);
+    setSalons([]);
+    setHasMore(false);
+
+    // 기존 마커 제거
+    markersRef.current.forEach(m => m.setMap(null));
+    markersRef.current = [];
+
+    const ps = new window.kakao.maps.services.Places();
+    const location = new window.kakao.maps.LatLng(lat, lng);
+
+    ps.keywordSearch(
+      '미용실',
+      (data: any[], status: any, pagination: any) => {
+        if (status === window.kakao.maps.services.Status.OK) {
+          const newSalons: Salon[] = data.map((place: any) => {
+            const placeLat = parseFloat(place.y);
+            const placeLng = parseFloat(place.x);
+            const distance = getDistanceFromLatLng(lat, lng, placeLat, placeLng);
+
+            return {
+              id: place.id,
+              name: place.place_name,
+              address: place.road_address_name || place.address_name,
+              phone: place.phone || '',
+              lat: placeLat,
+              lng: placeLng,
+              distance,
+              rating: undefined,
+              isPartner: false,
+            };
+          });
+
+          // 거리 순 정렬
+          newSalons.sort((a, b) => (a.distance || 0) - (b.distance || 0));
+
+          setSalons(prev => {
+            const existingIds = new Set(prev.map(s => s.id));
+            const unique = newSalons.filter(s => !existingIds.has(s.id));
+            return [...prev, ...unique].sort((a, b) => (a.distance || 0) - (b.distance || 0));
+          });
+
+          // 마커 추가
+          newSalons.forEach(salon => {
+            const marker = new window.kakao.maps.Marker({
+              position: new window.kakao.maps.LatLng(salon.lat, salon.lng),
+              map,
+            });
+
+            const infoContent = `<div style="padding:4px 8px;font-size:12px;white-space:nowrap;">${salon.name}</div>`;
+            const infowindow = new window.kakao.maps.InfoWindow({ content: infoContent });
+
+            window.kakao.maps.event.addListener(marker, 'click', () => {
+              infowindow.open(map, marker);
+            });
+
+            markersRef.current.push(marker);
+          });
+
+          paginationRef.current = pagination;
+          setHasMore(pagination.hasNextPage);
+        } else if (status === window.kakao.maps.services.Status.ZERO_RESULT) {
+          setSalons([]);
+        }
+        setIsSearching(false);
+      },
+      {
+        location,
+        radius: 3000,
+        sort: window.kakao.maps.services.SortBy.DISTANCE,
+        size: 15,
+      }
+    );
+  }, []);
+
+  // 더보기
+  const loadMore = useCallback(() => {
+    if (!paginationRef.current?.hasNextPage) return;
+    setIsSearching(true);
+    paginationRef.current.nextPage();
+  }, []);
+
+  // 위치 가져오기
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setLocationState('error');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setMyLat(pos.coords.latitude);
+        setMyLng(pos.coords.longitude);
+        setLocationState('granted');
+      },
+      (err) => {
+        console.warn('Geolocation error:', err.message);
+        if (err.code === err.PERMISSION_DENIED) {
+          setLocationState('denied');
+        } else {
+          setLocationState('error');
+        }
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+  }, []);
+
+  // 맵 + 검색 초기화
+  useEffect(() => {
+    if (locationState !== 'granted' || myLat === null || myLng === null) return;
+    if (!mapRef.current) return;
+
+    const startMap = () => {
+      if (!window.kakao?.maps) return;
+      window.kakao.maps.load(() => {
+        const map = initMap(myLat, myLng);
+        if (map) searchSalons(map, myLat, myLng);
+      });
+    };
+
+    if (window.kakao?.maps) {
+      startMap();
+    } else {
+      const checkKakao = setInterval(() => {
+        if (window.kakao?.maps) {
+          clearInterval(checkKakao);
+          startMap();
+        }
+      }, 300);
+      return () => clearInterval(checkKakao);
+    }
+  }, [locationState, myLat, myLng, initMap, searchSalons]);
+
+  // 현재 위치로 재검색
+  const handleRelocate = () => {
+    if (!navigator.geolocation) return;
+
+    setLocationState('loading');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        setMyLat(lat);
+        setMyLng(lng);
+        setLocationState('granted');
+
+        if (mapInstanceRef.current) {
+          const newCenter = new window.kakao.maps.LatLng(lat, lng);
+          mapInstanceRef.current.setCenter(newCenter);
+          if (myMarkerRef.current) {
+            myMarkerRef.current.setPosition(newCenter);
+          }
+          searchSalons(mapInstanceRef.current, lat, lng);
+        }
+      },
+      () => setLocationState('error'),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  };
+
   const handleCall = (phone: string) => {
+    if (!phone) return;
     window.open(`tel:${phone}`, '_self');
   };
 
@@ -165,32 +290,114 @@ export default function SalonPage() {
         <span className={styles.partnerBannerArrow}>&rarr;</span>
       </div>
 
-      <div ref={mapRef} className={styles.mapContainer} />
+      {/* 위치 권한 거부 / 에러 안내 */}
+      {(locationState === 'denied' || locationState === 'error') && (
+        <div className={styles.locationNotice}>
+          <div className={styles.locationNoticeIcon}>
+            {locationState === 'denied' ? '\uD83D\uDCCD' : '\u26A0\uFE0F'}
+          </div>
+          <p className={styles.locationNoticeText}>
+            {locationState === 'denied'
+              ? '위치 권한이 필요합니다.\n브라우저 설정에서 위치 권한을 허용해주세요.'
+              : '위치 정보를 가져올 수 없습니다.\n다시 시도해주세요.'}
+          </p>
+          <button className={styles.locationBtn} onClick={handleRelocate}>
+            위치 다시 가져오기
+          </button>
+        </div>
+      )}
+
+      {/* 로딩 중 */}
+      {locationState === 'loading' && (
+        <div className={styles.loadingContainer}>
+          <div className={styles.loadingSpinner} />
+          <p className={styles.loadingText}>현재 위치를 확인하고 있어요...</p>
+        </div>
+      )}
+
+      {/* 지도 */}
+      <div
+        ref={mapRef}
+        className={styles.mapContainer}
+        style={{ display: locationState === 'granted' ? 'block' : 'none' }}
+      />
+
+      {/* 내 위치로 재검색 버튼 */}
+      {locationState === 'granted' && (
+        <button className={styles.relocateBtn} onClick={handleRelocate}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <circle cx="12" cy="12" r="3" />
+            <line x1="12" y1="2" x2="12" y2="6" />
+            <line x1="12" y1="18" x2="12" y2="22" />
+            <line x1="2" y1="12" x2="6" y2="12" />
+            <line x1="18" y1="12" x2="22" y2="12" />
+          </svg>
+          내 위치에서 다시 검색
+        </button>
+      )}
 
       <BannerAd />
 
-      <div className={styles.salonList}>
-        {salons.map(salon => (
-          <div key={salon.id} className={styles.salonCard}>
-            {salon.isPartner && <span className={styles.partnerBadge}>제휴</span>}
-            <div className={styles.salonName}>{salon.name}</div>
-            <div className={styles.salonAddress}>{salon.address}</div>
-            <div className={styles.salonMeta}>
-              {salon.distance && <span>&#128205; {salon.distance >= 1000 ? `${(salon.distance / 1000).toFixed(1)}km` : `${salon.distance}m`}</span>}
-              {salon.rating && <span>&#11088; {salon.rating}</span>}
-            </div>
-            <div className={styles.salonActions}>
-              <button className={styles.btnCall} onClick={() => handleCall(salon.phone)}>
-                &#128222; 전화
-              </button>
-              <button className={styles.btnBook} onClick={() => handleBookClick(salon)}>
-                예약하기
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* 검색 중 */}
+      {isSearching && salons.length === 0 && (
+        <div className={styles.loadingContainer}>
+          <div className={styles.loadingSpinner} />
+          <p className={styles.loadingText}>주변 미용실을 찾고 있어요...</p>
+        </div>
+      )}
 
+      {/* 결과 없음 */}
+      {locationState === 'granted' && !isSearching && salons.length === 0 && (
+        <div className={styles.emptyState}>
+          <p>주변에 미용실을 찾지 못했어요.</p>
+          <button className={styles.locationBtn} onClick={handleRelocate}>
+            다시 검색하기
+          </button>
+        </div>
+      )}
+
+      {/* 미용실 목록 */}
+      {salons.length > 0 && (
+        <div className={styles.salonList}>
+          <div className={styles.salonCount}>
+            주변 미용실 <strong>{salons.length}</strong>곳
+          </div>
+          {salons.map(salon => (
+            <div key={salon.id} className={styles.salonCard}>
+              {salon.isPartner && <span className={styles.partnerBadge}>제휴</span>}
+              <div className={styles.salonName}>{salon.name}</div>
+              <div className={styles.salonAddress}>{salon.address}</div>
+              <div className={styles.salonMeta}>
+                {salon.distance != null && (
+                  <span>
+                    &#128205; {salon.distance >= 1000 ? `${(salon.distance / 1000).toFixed(1)}km` : `${salon.distance}m`}
+                  </span>
+                )}
+                {salon.phone && <span>&#128222; {salon.phone}</span>}
+              </div>
+              <div className={styles.salonActions}>
+                {salon.phone && (
+                  <button className={styles.btnCall} onClick={() => handleCall(salon.phone)}>
+                    &#128222; 전화
+                  </button>
+                )}
+                <button className={styles.btnBook} onClick={() => handleBookClick(salon)}>
+                  예약하기
+                </button>
+              </div>
+            </div>
+          ))}
+
+          {hasMore && (
+            <button className={styles.loadMoreBtn} onClick={loadMore} disabled={isSearching}>
+              {isSearching ? '불러오는 중...' : '더 많은 미용실 보기'}
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* 예약 모달 */}
       {bookingSalon && (
         <div className={styles.bookingModal} onClick={() => setBookingSalon(null)}>
           <div className={styles.bookingModalContent} onClick={e => e.stopPropagation()}>
