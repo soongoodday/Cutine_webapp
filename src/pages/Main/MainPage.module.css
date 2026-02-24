@@ -1,11 +1,13 @@
 .container {
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
   background: var(--color-bg);
-  padding: 24px 20px;
-  padding-bottom: calc(var(--bottom-nav-height) + 32px);
+  padding: 20px 20px;
+  padding-bottom: calc(var(--bottom-nav-height) + 16px);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* ===== 헤더 ===== */
@@ -96,13 +98,14 @@
 /* ===== D-Day 섹션 (카드 없이 오픈) ===== */
 .ddaySection {
   text-align: center;
-  padding: 12px 0 16px;
-  margin-bottom: 12px;
+  padding: 8px 0 8px;
+  margin-bottom: 8px;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-height: 0;
+  overflow: hidden;
 }
 
 .ddayNumber {
@@ -122,7 +125,7 @@
 
 .character {
   position: relative;
-  width: clamp(140px, 42vw, 200px);
+  width: clamp(100px, 28vw, 180px);
   aspect-ratio: 1 / 1.1;
   margin: 0 auto;
   animation: float 3s ease-in-out infinite;
@@ -168,13 +171,14 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
 }
 
 .infoCard {
   background: var(--color-surface);
   border-radius: 16px;
-  padding: 16px 12px;
+  padding: 12px 10px;
   text-align: center;
   border: 1px solid var(--color-border);
 }
@@ -202,7 +206,7 @@
 .cutButton {
   display: block;
   width: 100%;
-  padding: 16px;
+  padding: 14px;
   border-radius: 999px;
   background: #FF8C42;
   color: #fff;
@@ -211,7 +215,8 @@
   text-align: center;
   box-shadow: 0 4px 16px rgba(255, 140, 66, 0.35);
   transition: all 0.15s;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
 }
 
 .cutButton:active {
@@ -229,7 +234,8 @@
   text-align: center;
   text-decoration: underline;
   text-underline-offset: 3px;
-  margin-bottom: 24px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
 }
 
 /* ===== 모달 ===== */
