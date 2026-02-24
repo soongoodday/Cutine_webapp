@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import BannerAd from '../../components/Ad/BannerAd';
 import type { Salon } from '../../types';
 import styles from './SalonPage.module.css';
 
@@ -41,6 +40,9 @@ export default function SalonPage() {
   const [hasMore, setHasMore] = useState(false);
   const paginationRef = useRef<any>(null);
 
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [activeKeyword, setActiveKeyword] = useState('미용실');
+
   const [bookingSalon, setBookingSalon] = useState<Salon | null>(null);
   const [bookingForm, setBookingForm] = useState({ name: '', phone: '', date: '', time: '', memo: '' });
   const [bookingSubmitted, setBookingSubmitted] = useState(false);
@@ -77,7 +79,7 @@ export default function SalonPage() {
   }, []);
 
   // 미용실 검색
-  const searchSalons = useCallback((map: any, lat: number, lng: number) => {
+  const searchSalons = useCallback((map: any, lat: number, lng: number, keyword = '미용실') => {
     if (!window.kakao?.maps?.services) return;
 
     setIsSearching(true);
@@ -92,7 +94,7 @@ export default function SalonPage() {
     const location = new window.kakao.maps.LatLng(lat, lng);
 
     ps.keywordSearch(
-      '미용실',
+      keyword,
       (data: any[], status: any, pagination: any) => {
         if (status === window.kakao.maps.services.Status.OK) {
           const newSalons: Salon[] = data.map((place: any) => {
@@ -148,7 +150,7 @@ export default function SalonPage() {
       },
       {
         location,
-        radius: 3000,
+        radius: 5000,
         sort: window.kakao.maps.services.SortBy.DISTANCE,
         size: 15,
       }
@@ -240,6 +242,17 @@ export default function SalonPage() {
     );
   };
 
+  // 키워드 검색
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (myLat === null || myLng === null || !mapInstanceRef.current) return;
+
+    const keyword = searchKeyword.trim();
+    const finalKeyword = keyword ? `${keyword} 미용실` : '미용실';
+    setActiveKeyword(finalKeyword);
+    searchSalons(mapInstanceRef.current, myLat, myLng, finalKeyword);
+  };
+
   const handleCall = (phone: string) => {
     if (!phone) return;
     window.open(`tel:${phone}`, '_self');
@@ -322,22 +335,53 @@ export default function SalonPage() {
         style={{ display: locationState === 'granted' ? 'block' : 'none' }}
       />
 
-      {/* 내 위치로 재검색 버튼 */}
+      {/* 검색 + 내 위치 버튼 */}
       {locationState === 'granted' && (
-        <button className={styles.relocateBtn} onClick={handleRelocate}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <circle cx="12" cy="12" r="3" />
-            <line x1="12" y1="2" x2="12" y2="6" />
-            <line x1="12" y1="18" x2="12" y2="22" />
-            <line x1="2" y1="12" x2="6" y2="12" />
-            <line x1="18" y1="12" x2="22" y2="12" />
-          </svg>
-          내 위치에서 다시 검색
-        </button>
+        <div className={styles.searchArea}>
+          <form className={styles.searchForm} onSubmit={handleSearch}>
+            <svg className={styles.searchIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              className={styles.searchInput}
+              type="text"
+              placeholder="미용실 이름, 지역명으로 검색"
+              value={searchKeyword}
+              onChange={e => setSearchKeyword(e.target.value)}
+            />
+            {searchKeyword && (
+              <button
+                type="button"
+                className={styles.searchClear}
+                onClick={() => {
+                  setSearchKeyword('');
+                  if (myLat !== null && myLng !== null && mapInstanceRef.current) {
+                    setActiveKeyword('미용실');
+                    searchSalons(mapInstanceRef.current, myLat, myLng, '미용실');
+                  }
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            )}
+            <button type="submit" className={styles.searchBtn}>검색</button>
+          </form>
+          <button className={styles.relocateBtn} onClick={handleRelocate}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <circle cx="12" cy="12" r="3" />
+              <line x1="12" y1="2" x2="12" y2="6" />
+              <line x1="12" y1="18" x2="12" y2="22" />
+              <line x1="2" y1="12" x2="6" y2="12" />
+              <line x1="18" y1="12" x2="22" y2="12" />
+            </svg>
+            내 위치
+          </button>
+        </div>
       )}
-
-      <BannerAd />
 
       {/* 검색 중 */}
       {isSearching && salons.length === 0 && (
@@ -361,7 +405,10 @@ export default function SalonPage() {
       {salons.length > 0 && (
         <div className={styles.salonList}>
           <div className={styles.salonCount}>
-            주변 미용실 <strong>{salons.length}</strong>곳
+            {activeKeyword !== '미용실'
+              ? <>&ldquo;{activeKeyword.replace(' 미용실', '')}&rdquo; 검색 결과 <strong>{salons.length}</strong>곳</>
+              : <>주변 미용실 <strong>{salons.length}</strong>곳</>
+            }
           </div>
           {salons.map(salon => (
             <div key={salon.id} className={styles.salonCard}>
