@@ -118,13 +118,35 @@ export default function MainPage() {
           maxDate={todayStr}
         />
 
-        <button
-          className={`${styles.modalConfirm} ${!selectedDate ? styles.modalConfirmDisabled : ''}`}
-          onClick={handleDateCut}
-          disabled={!selectedDate}
-        >
-          커트하셨군요!
-        </button>
+        <div className={styles.modalActions}>
+          {selectedDate && cutDates.includes(selectedDate) ? (
+            <>
+              <button
+                className={styles.modalDelete}
+                onClick={() => {
+                  const record = records.find(r => r.date === selectedDate);
+                  if (record) {
+                    removeRecord(record.id);
+                    setSelectedDate('');
+                  }
+                }}
+              >
+                이 기록 삭제
+              </button>
+              <button className={styles.modalConfirm} onClick={handleDateCut}>
+                커트하셨군요!
+              </button>
+            </>
+          ) : (
+            <button
+              className={`${styles.modalConfirm} ${!selectedDate ? styles.modalConfirmDisabled : ''}`}
+              onClick={handleDateCut}
+              disabled={!selectedDate}
+            >
+              커트하셨군요!
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
