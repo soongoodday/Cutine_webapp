@@ -10,11 +10,27 @@ export default function SplashPage() {
   const [videoReady, setVideoReady] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // 영상 로드 완료 시 재생 시도
+  // 영상 로드 완료 시 재생 시도 + 실패 시 재시도
   const handleCanPlay = () => {
     setVideoReady(true);
-    videoRef.current?.play().catch(() => {});
+    videoRef.current?.play().catch(() => {
+      // autoplay 실패 시 0.5초 후 재시도
+      setTimeout(() => {
+        videoRef.current?.play().catch(() => {});
+      }, 500);
+    });
   };
+
+  // 영상 로딩 실패 대비: 수동 재생 시도
+  useEffect(() => {
+    const retryTimer = setTimeout(() => {
+      if (!videoReady && videoRef.current) {
+        videoRef.current.load();
+        videoRef.current.play().catch(() => {});
+      }
+    }, 1000);
+    return () => clearTimeout(retryTimer);
+  }, [videoReady]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -41,7 +57,11 @@ export default function SplashPage() {
       />
       <div className={styles.overlay} />
       <div className={styles.logo}>
-        <span className={styles.scissor}>&#9986;</span>
+        <img
+          className={styles.logoImg}
+          src="/images/logo.png"
+          alt="Cutine"
+        />
         <h1 className={styles.title}>Cutine</h1>
         <p className={styles.subtitle}>나만의 커트 주기 관리</p>
       </div>
