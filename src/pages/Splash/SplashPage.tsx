@@ -62,8 +62,6 @@ export default function SplashPage() {
           src="/images/Cutine_logo.png"
           alt="Cutine"
         />
-        <h1 className={styles.title}>Cutine</h1>
-        <p className={styles.subtitle}>나만의 커트 주기 관리</p>
       </div>
     </div>
   );

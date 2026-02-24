@@ -58,32 +58,12 @@
 }
 
 .logoImg {
-  width: 100px;
-  height: 100px;
+  width: 180px;
+  height: 180px;
   object-fit: contain;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  padding: 18px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   animation: fadeInUp 0.8s ease-out;
 }
 
-.title {
-  font-size: var(--font-size-3xl);
-  font-weight: 800;
-  color: white;
-  letter-spacing: -1px;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-}
-
-.subtitle {
-  font-size: var(--font-size-md);
-  color: rgba(255, 255, 255, 0.9);
-  margin-top: var(--space-xs);
-  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
-}
 
 .fadeOut {
   animation: fadeOut 0.4s ease-in forwards;
