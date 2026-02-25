@@ -44,6 +44,7 @@
 }
 
 .stepTitle {
+  font-family: var(--font-family-display);
   font-size: var(--font-size-xl);
   font-weight: 700;
   color: var(--color-text);

@@ -28,6 +28,7 @@
 }
 
 .headerTitle {
+  font-family: var(--font-family-display);
   font-size: var(--font-size-lg);
   font-weight: 700;
 }

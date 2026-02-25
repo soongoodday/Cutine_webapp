@@ -12,6 +12,7 @@
 }
 
 .headerLabel {
+  font-family: var(--font-family-display);
   font-size: 14px;
   font-weight: 600;
   color: #FF8C42;
@@ -19,6 +20,7 @@
 }
 
 .headerTitle {
+  font-family: var(--font-family-display);
   font-size: 22px;
   font-weight: 800;
   color: var(--color-text);

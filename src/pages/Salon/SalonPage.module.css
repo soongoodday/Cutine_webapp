@@ -28,6 +28,7 @@
 }
 
 .pageTitle {
+  font-family: var(--font-family-display);
   font-size: 18px;
   font-weight: 700;
 }

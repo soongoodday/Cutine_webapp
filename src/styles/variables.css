@@ -64,6 +64,7 @@
      - 글꼴 패밀리 & 용도별 크기
      ============================================ */
   --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-display: 'CookieRun', var(--font-family);  /* 제목/강조 전용 */
 
   /* 용도별 글자 크기 */
   --font-size-caption: 11px;         /* 캡션, 라벨, 광고 태그 */

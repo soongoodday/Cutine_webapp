@@ -49,13 +49,13 @@ export default function SettingsPage() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.pageTitle}>&#9881; 설정</h1>
+      <h1 className={styles.pageTitle}>설정</h1>
 
       <div className={styles.sectionTitle}>프로필</div>
       <div className={styles.section}>
         <button className={styles.item} onClick={() => editingField === 'nickname' ? saveEdit('nickname') : startEdit('nickname', profile.nickname)}>
           <div className={styles.itemLeft}>
-            <span className={styles.itemIcon}>&#128100;</span>
+            <span className={styles.itemIcon}>&#129489;</span>
             <span className={styles.itemLabel}>닉네임</span>
           </div>
           {editingField === 'nickname' ? (
@@ -75,7 +75,7 @@ export default function SettingsPage() {
 
         <button className={styles.item} onClick={cycleHairLength}>
           <div className={styles.itemLeft}>
-            <span className={styles.itemIcon}>&#128135;</span>
+            <span className={styles.itemIcon}>&#9986;&#65039;</span>
             <span className={styles.itemLabel}>머리 길이</span>
           </div>
           <span className={styles.itemValue}>{hairLabels[profile.hairLength]}</span>
@@ -83,7 +83,7 @@ export default function SettingsPage() {
 
         <button className={styles.item} onClick={() => editingField === 'cutCycleDays' ? saveEdit('cutCycleDays') : startEdit('cutCycleDays', String(profile.cutCycleDays))}>
           <div className={styles.itemLeft}>
-            <span className={styles.itemIcon}>&#128197;</span>
+            <span className={styles.itemIcon}>&#128338;</span>
             <span className={styles.itemLabel}>커트 주기</span>
           </div>
           {editingField === 'cutCycleDays' ? (
@@ -122,14 +122,14 @@ export default function SettingsPage() {
         <button className={styles.item} onClick={() => navigate('/salon/partner')}>
           <div className={styles.itemLeft}>
             <span className={styles.itemIcon}>&#128136;</span>
-            <span className={styles.itemLabel}>미용실 제휴 신청</span>
+            <span className={styles.itemLabel}>미용실 제휴</span>
           </div>
           <span className={styles.itemArrow}>&gt;</span>
         </button>
 
         <button className={styles.item} onClick={() => navigate('/settings/contact')}>
           <div className={styles.itemLeft}>
-            <span className={styles.itemIcon}>&#128172;</span>
+            <span className={styles.itemIcon}>&#128140;</span>
             <span className={styles.itemLabel}>문의하기</span>
           </div>
           <span className={styles.itemArrow}>&gt;</span>
@@ -137,7 +137,7 @@ export default function SettingsPage() {
 
         <button className={styles.item} onClick={() => navigate('/settings/privacy')}>
           <div className={styles.itemLeft}>
-            <span className={styles.itemIcon}>&#128196;</span>
+            <span className={styles.itemIcon}>&#128274;</span>
             <span className={styles.itemLabel}>개인정보처리방침</span>
           </div>
           <span className={styles.itemArrow}>&gt;</span>
