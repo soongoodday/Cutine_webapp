@@ -1,10 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { tips } from '../../data/tips';
 import type { Tip } from '../../types';
 import styles from './TipsPage.module.css';
 
 type Category = 'all' | Tip['category'];
-type SortOrder = 'latest' | 'popular';
 
 const TIPS_PER_PAGE = 4;
 
@@ -15,42 +14,43 @@ const categories: { value: Category; label: string }[] = [
   { value: 'care', label: '케어' },
 ];
 
-const sortOptions: { value: SortOrder; label: string }[] = [
-  { value: 'latest', label: '최신순' },
-  { value: 'popular', label: '인기순' },
-];
-
-const categoryColors: Record<string, string> = {
-  dry: 'linear-gradient(135deg, #667eea, #764ba2)',
-  style: 'linear-gradient(135deg, #f093fb, #f5576c)',
-  care: 'linear-gradient(135deg, #4facfe, #00f2fe)',
-};
+// 데이터에서 고유 태그 자동 추출
+const allTags = Array.from(new Set(tips.flatMap(t => t.tags)));
 
 export default function TipsPage() {
   const [filter, setFilter] = useState<Category>('all');
+  const [activeTag, setActiveTag] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [sort, setSort] = useState<SortOrder>('latest');
   const [visibleCount, setVisibleCount] = useState(TIPS_PER_PAGE);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const filteredTips = useMemo(() => {
-    const filtered = tips.filter(t => {
+    return tips.filter(t => {
       const matchCategory = filter === 'all' || t.category === filter;
+      const matchTag = !activeTag || t.tags.includes(activeTag);
       const matchSearch = search === '' || t.title.toLowerCase().includes(search.toLowerCase());
-      return matchCategory && matchSearch;
+      return matchCategory && matchTag && matchSearch;
     });
-    const sorted = [...filtered];
-    if (sort === 'latest') {
-      sorted.sort((a, b) => Number(b.id) - Number(a.id));
-    }
-    return sorted;
-  }, [filter, search, sort]);
+  }, [filter, activeTag, search]);
 
   const visibleTips = filteredTips.slice(0, visibleCount);
   const hasMore = visibleCount < filteredTips.length;
 
+  // 현재 카테고리 필터에 해당하는 태그만 표시
+  const visibleTags = useMemo(() => {
+    if (filter === 'all') return allTags;
+    const filtered = tips.filter(t => t.category === filter);
+    return Array.from(new Set(filtered.flatMap(t => t.tags)));
+  }, [filter]);
+
   const handleFilterChange = (cat: Category) => {
     setFilter(cat);
+    setActiveTag(null);
+    setVisibleCount(TIPS_PER_PAGE);
+  };
+
+  const handleTagClick = (tag: string) => {
+    setActiveTag(prev => (prev === tag ? null : tag));
     setVisibleCount(TIPS_PER_PAGE);
   };
 
@@ -68,10 +68,7 @@ export default function TipsPage() {
         onClick={() => handleTipClick(tip)}
       >
         {/* Header */}
-        <div
-          className={styles.tipHeader}
-          style={{ background: categoryColors[tip.category] || categoryColors.care }}
-        >
+        <div className={`${styles.tipHeader} ${styles[`tipHeader_${tip.category}`]}`}>
           <span className={styles.tipIcon}>{tip.icon}</span>
           <div className={styles.tipHeaderText}>
             <div className={styles.tipTitle}>{tip.title}</div>
@@ -81,7 +78,7 @@ export default function TipsPage() {
             className={`${styles.chevron} ${isExpanded ? styles.chevronOpen : ''}`}
             viewBox="0 0 24 24"
             fill="none"
-            stroke="white"
+            stroke="currentColor"
             strokeWidth="2.5"
           >
             <polyline points="6 9 12 15 18 9" />
@@ -129,14 +126,6 @@ export default function TipsPage() {
     );
   };
 
-  const renderList = () => {
-    const items: React.JSX.Element[] = [];
-    visibleTips.forEach(tip => {
-      items.push(renderTipCard(tip));
-    });
-    return items;
-  };
-
   return (
     <div className={styles.container}>
       <h1 className={styles.pageTitle}>{'💡'} 헤어 관리 팁</h1>
@@ -174,21 +163,23 @@ export default function TipsPage() {
             </button>
           ))}
         </div>
-        <div className={styles.sortWrap}>
-          {sortOptions.map(opt => (
-            <button
-              key={opt.value}
-              className={`${styles.sortBtn} ${sort === opt.value ? styles.sortActive : ''}`}
-              onClick={() => setSort(opt.value)}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
+      </div>
+
+      {/* 해시태그 */}
+      <div className={styles.tagRow}>
+        {visibleTags.map(tag => (
+          <button
+            key={tag}
+            className={`${styles.tagBtn} ${activeTag === tag ? styles.tagActive : ''}`}
+            onClick={() => handleTagClick(tag)}
+          >
+            #{tag}
+          </button>
+        ))}
       </div>
 
       <div className={styles.list}>
-        {renderList()}
+        {visibleTips.map(tip => renderTipCard(tip))}
       </div>
 
       {hasMore && (

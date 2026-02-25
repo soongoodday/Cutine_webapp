@@ -53,6 +53,7 @@ export interface Tip {
   subtitle: string;
   category: 'dry' | 'style' | 'care' | 'etc';
   icon: string;
+  tags: string[];
   steps: TipStep[];
   doList?: string[];
   dontList?: string[];
