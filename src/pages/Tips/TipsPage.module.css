@@ -74,7 +74,7 @@
   height: 14px;
 }
 
-/* Filter row: categories left, sort right */
+/* Filter row */
 .filterRow {
   display: flex;
   align-items: center;
@@ -96,7 +96,6 @@
   display: none;
 }
 
-/* Sort buttons */
 .sortWrap {
   display: flex;
   gap: 4px;
@@ -140,112 +139,189 @@
   border-color: var(--color-primary);
 }
 
-/* 2-column grid */
+/* Single-column list */
 .list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 
+/* ── Tip card ── */
 .tipCard {
-  display: flex;
-  flex-direction: column;
-  background: var(--color-surface);
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   cursor: pointer;
-  transition: transform 0.15s;
+  transition: transform 0.15s, box-shadow 0.15s;
+  background: var(--color-surface);
 }
 
 .tipCard:active {
-  transform: scale(0.97);
+  transform: scale(0.98);
 }
 
-/* Thumbnail wrapper — 16:9 */
-.tipThumbWrap {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
+.tipCardExpanded {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Header (gradient bar) */
+.tipHeader {
   display: flex;
   align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: #e8e8e8;
+  gap: 12px;
+  padding: 14px 16px;
+  color: white;
+  min-height: 64px;
 }
 
-/* Actual thumbnail image */
-.thumbImg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Gradient placeholder when no thumbnail */
-.thumbPlaceholder {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-/* Play button (orange circle + SVG icon) */
-.playBtn {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 38px;
-  height: 38px;
-  z-index: 2;
-  background: rgba(255, 107, 53, 0.92);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-}
-
-.playSvg {
-  width: 18px;
-  height: 18px;
-  margin-left: 2px;
-}
-
-/* Category icon subtle watermark */
-.categoryIcon {
+.tipIcon {
   font-size: 28px;
-  opacity: 0.25;
-  position: absolute;
-  bottom: 6px;
-  right: 8px;
-  z-index: 1;
-  pointer-events: none;
+  flex-shrink: 0;
+  line-height: 1;
 }
 
-/* Tip info below thumbnail */
-.tipInfo {
-  padding: 8px 10px 10px;
+.tipHeaderText {
+  flex: 1;
+  min-width: 0;
 }
 
 .tipTitle {
-  font-size: 12.5px;
-  font-weight: 600;
-  line-height: 1.35;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tipSubtitle {
+  font-size: 11.5px;
+  font-weight: 400;
+  opacity: 0.85;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chevron {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  transition: transform 0.25s;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* ── Expandable body ── */
+.tipBody {
+  padding: 16px;
+  cursor: default;
+}
+
+/* Steps */
+.stepsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stepRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.stepNum {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.stepEmoji {
+  font-size: 18px;
+  flex-shrink: 0;
+  line-height: 1.3;
+}
+
+.stepText {
+  font-size: 13.5px;
+  line-height: 1.5;
   color: var(--color-text);
 }
 
-/* Ad wrapper spans full grid width */
+/* Do / Don't section */
+.doDontWrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.doSection,
+.dontSection {
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.doSection {
+  background: rgba(52, 199, 89, 0.08);
+  border: 1px solid rgba(52, 199, 89, 0.2);
+}
+
+.dontSection {
+  background: rgba(255, 59, 48, 0.08);
+  border: 1px solid rgba(255, 59, 48, 0.2);
+}
+
+.doLabel,
+.dontLabel {
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.doLabel {
+  color: #34c759;
+}
+
+.dontLabel {
+  color: #ff3b30;
+}
+
+.doItem,
+.dontItem {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.doItem::before {
+  content: '\2713 ';
+  color: #34c759;
+  font-weight: 700;
+}
+
+.dontItem::before {
+  content: '\2717 ';
+  color: #ff3b30;
+  font-weight: 700;
+}
+
+/* Ad wrapper spans full width */
 .adWrapper {
-  grid-column: 1 / -1;
+  width: 100%;
 }
 
 /* Load more button */

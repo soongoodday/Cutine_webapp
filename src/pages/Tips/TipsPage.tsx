@@ -13,22 +13,16 @@ type SortOrder = 'latest' | 'popular';
 const TIPS_PER_PAGE = 4;
 
 const categories: { value: Category; label: string }[] = [
-  { value: 'all', label: '전체' },
-  { value: 'dry', label: '드라이' },
-  { value: 'style', label: '스타일링' },
-  { value: 'care', label: '케어' },
+  { value: 'all', label: '\uC804\uCCB4' },
+  { value: 'dry', label: '\uB4DC\uB77C\uC774' },
+  { value: 'style', label: '\uC2A4\uD0C0\uC77C\uB9C1' },
+  { value: 'care', label: '\uCF00\uC5B4' },
 ];
 
 const sortOptions: { value: SortOrder; label: string }[] = [
-  { value: 'latest', label: '최신순' },
-  { value: 'popular', label: '인기순' },
+  { value: 'latest', label: '\uCD5C\uC2E0\uC21C' },
+  { value: 'popular', label: '\uC778\uAE30\uC21C' },
 ];
-
-const categoryIcons: Record<string, string> = {
-  dry: '\uD83D\uDCA8',
-  style: '\u2702\uFE0F',
-  care: '\uD83E\uDDF4',
-};
 
 const categoryColors: Record<string, string> = {
   dry: 'linear-gradient(135deg, #667eea, #764ba2)',
@@ -41,6 +35,7 @@ export default function TipsPage() {
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<SortOrder>('latest');
   const [visibleCount, setVisibleCount] = useState(TIPS_PER_PAGE);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const { profile } = useUser();
 
   const filteredTips = useMemo(() => {
@@ -59,7 +54,6 @@ export default function TipsPage() {
   const visibleTips = filteredTips.slice(0, visibleCount);
   const hasMore = visibleCount < filteredTips.length;
 
-  // 필터/검색 변경 시 보이는 개수 리셋
   const handleFilterChange = (cat: Category) => {
     setFilter(cat);
     setVisibleCount(TIPS_PER_PAGE);
@@ -71,36 +65,80 @@ export default function TipsPage() {
   }, [profile]);
 
   const handleTipClick = (tip: Tip) => {
-    window.open(tip.videoUrl, '_blank', 'noopener');
+    setExpandedId(prev => (prev === tip.id ? null : tip.id));
   };
 
-  const renderTipCard = (tip: Tip) => (
-    <div key={tip.id} className={styles.tipCard} onClick={() => handleTipClick(tip)}>
-      <div className={styles.tipThumbWrap}>
-        {tip.thumbnail ? (
-          <img className={styles.thumbImg} src={tip.thumbnail} alt={tip.title} />
-        ) : (
-          <div
-            className={styles.thumbPlaceholder}
-            style={{ background: categoryColors[tip.category] || categoryColors.care }}
-          />
-        )}
-        <span className={styles.categoryIcon}>
-          {categoryIcons[tip.category] || ''}
-        </span>
-        <div className={styles.playBtn}>
-          <svg className={styles.playSvg} viewBox="0 0 24 24" fill="white">
-            <path d="M8 5v14l11-7z" />
+  const renderTipCard = (tip: Tip) => {
+    const isExpanded = expandedId === tip.id;
+
+    return (
+      <div
+        key={tip.id}
+        className={`${styles.tipCard} ${isExpanded ? styles.tipCardExpanded : ''}`}
+        onClick={() => handleTipClick(tip)}
+      >
+        {/* Header */}
+        <div
+          className={styles.tipHeader}
+          style={{ background: categoryColors[tip.category] || categoryColors.care }}
+        >
+          <span className={styles.tipIcon}>{tip.icon}</span>
+          <div className={styles.tipHeaderText}>
+            <div className={styles.tipTitle}>{tip.title}</div>
+            <div className={styles.tipSubtitle}>{tip.subtitle}</div>
+          </div>
+          <svg
+            className={`${styles.chevron} ${isExpanded ? styles.chevronOpen : ''}`}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            strokeWidth="2.5"
+          >
+            <polyline points="6 9 12 15 18 9" />
           </svg>
         </div>
-      </div>
-      <div className={styles.tipInfo}>
-        <div className={styles.tipTitle}>{tip.title}</div>
-      </div>
-    </div>
-  );
 
-  // 팁 4개마다 제품 추천 1개 삽입 (2열 그리드 → 2행 후 광고)
+        {/* Expandable body */}
+        {isExpanded && (
+          <div className={styles.tipBody} onClick={e => e.stopPropagation()}>
+            {/* Steps */}
+            <div className={styles.stepsSection}>
+              {tip.steps.map((step, i) => (
+                <div key={i} className={styles.stepRow}>
+                  <span className={styles.stepNum}>{i + 1}</span>
+                  <span className={styles.stepEmoji}>{step.emoji}</span>
+                  <span className={styles.stepText}>{step.text}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Do / Don't */}
+            {(tip.doList || tip.dontList) && (
+              <div className={styles.doDontWrap}>
+                {tip.doList && (
+                  <div className={styles.doSection}>
+                    <div className={styles.doLabel}>O 이렇게</div>
+                    {tip.doList.map((item, i) => (
+                      <div key={i} className={styles.doItem}>{item}</div>
+                    ))}
+                  </div>
+                )}
+                {tip.dontList && (
+                  <div className={styles.dontSection}>
+                    <div className={styles.dontLabel}>X 이건 금지</div>
+                    {tip.dontList.map((item, i) => (
+                      <div key={i} className={styles.dontItem}>{item}</div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const renderList = () => {
     const items: React.JSX.Element[] = [];
     let productIndex = 0;
@@ -124,7 +162,7 @@ export default function TipsPage() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.pageTitle}>{'\uD83D\uDCA1'} 헤어 관련 팁 영상</h1>
+      <h1 className={styles.pageTitle}>{'\uD83D\uDCA1'} \uD5E4\uC5B4 \uAD00\uB9AC \uD301</h1>
 
       <div className={styles.searchBar}>
         <svg className={styles.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -134,7 +172,7 @@ export default function TipsPage() {
         <input
           type="text"
           className={styles.searchInput}
-          placeholder="검색어를 입력해주세요"
+          placeholder="\uAC80\uC0C9\uC5B4\uB97C \uC785\uB825\uD574\uC8FC\uC138\uC694"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
@@ -181,7 +219,7 @@ export default function TipsPage() {
           className={styles.loadMoreBtn}
           onClick={() => setVisibleCount(prev => prev + TIPS_PER_PAGE)}
         >
-          더보기
+          \uB354\uBCF4\uAE30
           <svg className={styles.loadMoreIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="6 9 12 15 18 9" />
           </svg>

@@ -42,13 +42,20 @@ export interface Product {
   description: string;
 }
 
+export interface TipStep {
+  emoji: string;
+  text: string;
+}
+
 export interface Tip {
   id: string;
   title: string;
-  thumbnail: string;
-  videoUrl: string;
+  subtitle: string;
   category: 'dry' | 'style' | 'care' | 'etc';
-  duration: string;
+  icon: string;
+  steps: TipStep[];
+  doList?: string[];
+  dontList?: string[];
 }
 
 export interface PartnerApplication {
