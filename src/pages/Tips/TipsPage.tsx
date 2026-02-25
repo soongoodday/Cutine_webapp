@@ -14,12 +14,69 @@ const categories: { value: Category; label: string }[] = [
   { value: 'care', label: '케어' },
 ];
 
-// 데이터에서 고유 태그 자동 추출
-const allTags = Array.from(new Set(tips.flatMap(t => t.tags)));
+const tipIconPaths: Record<string, JSX.Element> = {
+  wind: (
+    <>
+      <path d="M17.7 7.7A2.5 2.5 0 1 1 19.5 12H2" />
+      <path d="M9.6 4.6A2 2 0 1 1 11 8H2" />
+      <path d="M12.6 19.4A2 2 0 1 0 14 16H2" />
+    </>
+  ),
+  shield: (
+    <>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <polyline points="9 12 11 14 15 10" />
+    </>
+  ),
+  arrowUp: (
+    <>
+      <polyline points="17 11 12 6 7 11" />
+      <polyline points="17 18 12 13 7 18" />
+    </>
+  ),
+  tube: (
+    <>
+      <rect x="8" y="2" width="8" height="4" rx="1" />
+      <path d="M7 6h10v12a4 4 0 0 1-4 4h-2a4 4 0 0 1-4-4V6z" />
+    </>
+  ),
+  scissors: (
+    <>
+      <circle cx="6" cy="6" r="3" />
+      <circle cx="6" cy="18" r="3" />
+      <line x1="20" y1="4" x2="8.12" y2="15.88" />
+      <line x1="14.47" y1="14.48" x2="20" y2="20" />
+      <line x1="8.12" y1="8.12" x2="12" y2="12" />
+    </>
+  ),
+  wave: (
+    <>
+      <path d="M2 7c2-4 4-4 6 0s4 4 6 0 4-4 6 0" />
+      <path d="M2 17c2-4 4-4 6 0s4 4 6 0 4-4 6 0" />
+    </>
+  ),
+  bubbles: (
+    <>
+      <circle cx="9" cy="13" r="5" />
+      <circle cx="16" cy="7" r="3.5" />
+      <circle cx="17" cy="16" r="2.5" />
+    </>
+  ),
+  leaf: (
+    <>
+      <path d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 17 3.5s1.5 2.5-.5 6.3A7 7 0 0 1 11 20z" />
+      <path d="M11 20V10" />
+    </>
+  ),
+  droplet: (
+    <>
+      <path d="M12 2.7c-3.5 4.7-7 8.1-7 11.8a7 7 0 0 0 14 0c0-3.7-3.5-7.1-7-11.8z" />
+    </>
+  ),
+};
 
 export default function TipsPage() {
   const [filter, setFilter] = useState<Category>('all');
-  const [activeTag, setActiveTag] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [visibleCount, setVisibleCount] = useState(TIPS_PER_PAGE);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -27,30 +84,16 @@ export default function TipsPage() {
   const filteredTips = useMemo(() => {
     return tips.filter(t => {
       const matchCategory = filter === 'all' || t.category === filter;
-      const matchTag = !activeTag || t.tags.includes(activeTag);
       const matchSearch = search === '' || t.title.toLowerCase().includes(search.toLowerCase());
-      return matchCategory && matchTag && matchSearch;
+      return matchCategory && matchSearch;
     });
-  }, [filter, activeTag, search]);
+  }, [filter, search]);
 
   const visibleTips = filteredTips.slice(0, visibleCount);
   const hasMore = visibleCount < filteredTips.length;
 
-  // 현재 카테고리 필터에 해당하는 태그만 표시
-  const visibleTags = useMemo(() => {
-    if (filter === 'all') return allTags;
-    const filtered = tips.filter(t => t.category === filter);
-    return Array.from(new Set(filtered.flatMap(t => t.tags)));
-  }, [filter]);
-
   const handleFilterChange = (cat: Category) => {
     setFilter(cat);
-    setActiveTag(null);
-    setVisibleCount(TIPS_PER_PAGE);
-  };
-
-  const handleTagClick = (tag: string) => {
-    setActiveTag(prev => (prev === tag ? null : tag));
     setVisibleCount(TIPS_PER_PAGE);
   };
 
@@ -69,7 +112,11 @@ export default function TipsPage() {
       >
         {/* Header */}
         <div className={`${styles.tipHeader} ${styles[`tipHeader_${tip.category}`]}`}>
-          <span className={styles.tipIcon}>{tip.icon}</span>
+          <div className={`${styles.tipIconBadge} ${styles[`tipIconBadge_${tip.category}`]}`}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              {tipIconPaths[tip.icon]}
+            </svg>
+          </div>
           <div className={styles.tipHeaderText}>
             <div className={styles.tipTitle}>{tip.title}</div>
             <div className={styles.tipSubtitle}>{tip.subtitle}</div>
@@ -159,16 +206,6 @@ export default function TipsPage() {
             onClick={() => handleFilterChange(cat.value)}
           >
             {cat.label}
-          </button>
-        ))}
-        <span className={styles.filterDivider} />
-        {visibleTags.map(tag => (
-          <button
-            key={tag}
-            className={`${styles.tagBtn} ${activeTag === tag ? styles.tagActive : ''}`}
-            onClick={() => handleTagClick(tag)}
-          >
-            #{tag}
           </button>
         ))}
       </div>

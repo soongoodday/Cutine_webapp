@@ -74,7 +74,7 @@
   height: 14px;
 }
 
-/* Combined filter + tag row */
+/* Filter row */
 .filterRow {
   display: flex;
   align-items: center;
@@ -108,33 +108,6 @@
   border-color: var(--color-primary);
 }
 
-.filterDivider {
-  width: 1px;
-  height: 20px;
-  background: var(--color-border);
-  flex-shrink: 0;
-}
-
-.tagBtn {
-  padding: 5px 10px;
-  border-radius: 14px;
-  background: transparent;
-  color: var(--color-text-secondary);
-  font-size: 12px;
-  font-weight: 500;
-  white-space: nowrap;
-  border: 1px solid var(--color-border);
-  cursor: pointer;
-  transition: all 0.2s;
-  flex-shrink: 0;
-}
-
-.tagBtn.tagActive {
-  background: rgba(108, 99, 255, 0.1);
-  color: var(--color-primary);
-  border-color: var(--color-primary-light);
-}
-
 /* Single-column list */
 .list {
   display: flex;
@@ -161,7 +134,7 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Header — 카테고리별 부드러운 배경 */
+/* Header */
 .tipHeader {
   display: flex;
   align-items: center;
@@ -185,10 +158,32 @@
   color: var(--color-text);
 }
 
-.tipIcon {
-  font-size: 28px;
+/* Icon badge */
+.tipIconBadge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  line-height: 1;
+}
+
+.tipIconBadge svg {
+  width: 22px;
+  height: 22px;
+}
+
+.tipIconBadge_dry {
+  background: linear-gradient(135deg, #7B6CF6, #9D93FA);
+}
+
+.tipIconBadge_style {
+  background: linear-gradient(135deg, #B07CD8, #C99BE8);
+}
+
+.tipIconBadge_care {
+  background: linear-gradient(135deg, #5BA8F7, #7EC0FF);
 }
 
 .tipHeaderText {

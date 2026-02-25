@@ -7,7 +7,7 @@ export const tips: Tip[] = [
     title: '볼륨 드라이 5단계',
     subtitle: '납작한 머리를 살리는 기본 드라이 방법',
     category: 'dry',
-    icon: '💨',
+    icon: 'wind',
     tags: ['볼륨', '드라이', '기초'],
     steps: [
       { emoji: '💧', text: '타올로 물기를 80% 제거 (문지르지 말고 눌러서)' },
@@ -24,7 +24,7 @@ export const tips: Tip[] = [
     title: '탈모 예방 드라이법',
     subtitle: '두피 건강을 지키는 안전한 드라이 습관',
     category: 'dry',
-    icon: '🛡️',
+    icon: 'shield',
     tags: ['탈모예방', '드라이', '두피'],
     steps: [
       { emoji: '🌡️', text: '냉풍 or 미온풍으로 설정 (고온 절대 금지)' },
@@ -41,7 +41,7 @@ export const tips: Tip[] = [
     title: '앞머리 볼륨 살리기',
     subtitle: '이마가 넓어도 걱정 없는 앞머리 드라이',
     category: 'dry',
-    icon: '💇',
+    icon: 'arrowUp',
     tags: ['볼륨', '앞머리', '드라이'],
     steps: [
       { emoji: '💦', text: '앞머리를 충분히 적신 후 시작' },
@@ -59,7 +59,7 @@ export const tips: Tip[] = [
     title: '왁스 스타일링 기초',
     subtitle: '처음 왁스 쓰는 사람을 위한 기본 가이드',
     category: 'style',
-    icon: '🧴',
+    icon: 'tube',
     tags: ['왁스', '스타일링', '기초'],
     steps: [
       { emoji: '📏', text: '10원 동전 크기만큼 왁스를 손바닥 중앙에 덜기' },
@@ -76,7 +76,7 @@ export const tips: Tip[] = [
     title: '셀프 앞머리 커트',
     subtitle: '미용실 가기 전 앞머리만 정리하는 꿀팁',
     category: 'style',
-    icon: '✂️',
+    icon: 'scissors',
     tags: ['셀프커트', '앞머리'],
     steps: [
       { emoji: '💧', text: '마른 상태에서 자르기 (젖으면 짧아져 보임)' },
@@ -92,7 +92,7 @@ export const tips: Tip[] = [
     title: '내추럴 펌 셋팅법',
     subtitle: '펌한 머리를 자연스럽게 살리는 스타일링',
     category: 'style',
-    icon: '🌀',
+    icon: 'wave',
     tags: ['펌', '스타일링', '컬'],
     steps: [
       { emoji: '💦', text: '스프레이로 머리를 촉촉하게 적시기' },
@@ -110,7 +110,7 @@ export const tips: Tip[] = [
     title: '올바른 샴푸 방법',
     subtitle: '두피 건강을 위한 정석 샴푸 루틴',
     category: 'care',
-    icon: '🧴',
+    icon: 'bubbles',
     tags: ['샴푸', '두피', '기초'],
     steps: [
       { emoji: '💧', text: '미온수로 1~2분 충분히 예비 세정' },
@@ -127,7 +127,7 @@ export const tips: Tip[] = [
     title: '두피 케어 루틴',
     subtitle: '탈모 예방과 건강한 두피를 위한 관리',
     category: 'care',
-    icon: '🧖',
+    icon: 'leaf',
     tags: ['두피', '탈모예방', '루틴'],
     steps: [
       { emoji: '🔍', text: '두피 타입 파악 (지성/건성/민감성)' },
@@ -144,7 +144,7 @@ export const tips: Tip[] = [
     title: '헤어 에센스 사용법',
     subtitle: '건조한 모발을 촉촉하게 관리하는 방법',
     category: 'care',
-    icon: '💧',
+    icon: 'droplet',
     tags: ['에센스', '모발관리', '보습'],
     steps: [
       { emoji: '💦', text: '타올 드라이 후 물기 70% 제거 상태에서 시작' },
