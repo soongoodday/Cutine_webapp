@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, type ReactNode } from 'react';
 import { tips } from '../../data/tips';
 import type { Tip } from '../../types';
 import styles from './TipsPage.module.css';
@@ -14,7 +14,7 @@ const categories: { value: Category; label: string }[] = [
   { value: 'care', label: '케어' },
 ];
 
-const tipIconPaths: Record<string, JSX.Element> = {
+const tipIconPaths: Record<string, ReactNode> = {
   wind: (
     <>
       <path d="M17.7 7.7A2.5 2.5 0 1 1 19.5 12H2" />
