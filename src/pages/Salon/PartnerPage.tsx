@@ -40,7 +40,7 @@ export default function PartnerPage() {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
-          <button className={styles.backBtn} onClick={() => navigate('/salon')}>&lt;</button>
+          <button className={styles.backBtn} onClick={() => navigate(-1)}>&lt;</button>
           <h1 className={styles.headerTitle}>제휴 신청</h1>
         </div>
         <div className={styles.successMessage}>
@@ -58,7 +58,7 @@ export default function PartnerPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <button className={styles.backBtn} onClick={() => navigate('/salon')}>&lt;</button>
+        <button className={styles.backBtn} onClick={() => navigate(-1)}>&lt;</button>
         <h1 className={styles.headerTitle}>미용실 제휴 신청</h1>
       </div>
 
