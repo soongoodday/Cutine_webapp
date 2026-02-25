@@ -319,11 +319,6 @@
   font-weight: 700;
 }
 
-/* Ad wrapper spans full width */
-.adWrapper {
-  width: 100%;
-}
-
 /* Load more button */
 .loadMoreBtn {
   display: flex;
@@ -353,6 +348,3 @@
   height: 16px;
 }
 
-.bannerWrap {
-  margin-top: 16px;
-}

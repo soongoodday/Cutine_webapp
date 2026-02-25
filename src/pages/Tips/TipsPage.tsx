@@ -1,9 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { tips } from '../../data/tips';
-import { products } from '../../data/products';
-import { useUser } from '../../context/UserContext';
-import NativeAd from '../../components/Ad/NativeAd';
-import BannerAd from '../../components/Ad/BannerAd';
 import type { Tip } from '../../types';
 import styles from './TipsPage.module.css';
 
@@ -13,15 +9,15 @@ type SortOrder = 'latest' | 'popular';
 const TIPS_PER_PAGE = 4;
 
 const categories: { value: Category; label: string }[] = [
-  { value: 'all', label: '\uC804\uCCB4' },
-  { value: 'dry', label: '\uB4DC\uB77C\uC774' },
-  { value: 'style', label: '\uC2A4\uD0C0\uC77C\uB9C1' },
-  { value: 'care', label: '\uCF00\uC5B4' },
+  { value: 'all', label: '전체' },
+  { value: 'dry', label: '드라이' },
+  { value: 'style', label: '스타일링' },
+  { value: 'care', label: '케어' },
 ];
 
 const sortOptions: { value: SortOrder; label: string }[] = [
-  { value: 'latest', label: '\uCD5C\uC2E0\uC21C' },
-  { value: 'popular', label: '\uC778\uAE30\uC21C' },
+  { value: 'latest', label: '최신순' },
+  { value: 'popular', label: '인기순' },
 ];
 
 const categoryColors: Record<string, string> = {
@@ -36,7 +32,6 @@ export default function TipsPage() {
   const [sort, setSort] = useState<SortOrder>('latest');
   const [visibleCount, setVisibleCount] = useState(TIPS_PER_PAGE);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const { profile } = useUser();
 
   const filteredTips = useMemo(() => {
     const filtered = tips.filter(t => {
@@ -58,11 +53,6 @@ export default function TipsPage() {
     setFilter(cat);
     setVisibleCount(TIPS_PER_PAGE);
   };
-
-  const recommendedProducts = useMemo(() => {
-    if (!profile) return products;
-    return products.filter(p => p.hairTypes.includes(profile.hairLength));
-  }, [profile]);
 
   const handleTipClick = (tip: Tip) => {
     setExpandedId(prev => (prev === tip.id ? null : tip.id));
@@ -141,28 +131,15 @@ export default function TipsPage() {
 
   const renderList = () => {
     const items: React.JSX.Element[] = [];
-    let productIndex = 0;
-
-    visibleTips.forEach((tip, i) => {
+    visibleTips.forEach(tip => {
       items.push(renderTipCard(tip));
-
-      if ((i + 1) % 4 === 0 && productIndex < recommendedProducts.length) {
-        const product = recommendedProducts[productIndex];
-        items.push(
-          <div key={`ad-${product.id}`} className={styles.adWrapper}>
-            <NativeAd product={product} />
-          </div>
-        );
-        productIndex++;
-      }
     });
-
     return items;
   };
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.pageTitle}>{'\uD83D\uDCA1'} \uD5E4\uC5B4 \uAD00\uB9AC \uD301</h1>
+      <h1 className={styles.pageTitle}>{'💡'} 헤어 관리 팁</h1>
 
       <div className={styles.searchBar}>
         <svg className={styles.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -172,7 +149,7 @@ export default function TipsPage() {
         <input
           type="text"
           className={styles.searchInput}
-          placeholder="\uAC80\uC0C9\uC5B4\uB97C \uC785\uB825\uD574\uC8FC\uC138\uC694"
+          placeholder="검색어를 입력해주세요"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
@@ -219,16 +196,12 @@ export default function TipsPage() {
           className={styles.loadMoreBtn}
           onClick={() => setVisibleCount(prev => prev + TIPS_PER_PAGE)}
         >
-          \uB354\uBCF4\uAE30
+          더보기
           <svg className={styles.loadMoreIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="6 9 12 15 18 9" />
           </svg>
         </button>
       )}
-
-      <div className={styles.bannerWrap}>
-        <BannerAd />
-      </div>
     </div>
   );
 }
