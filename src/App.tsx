@@ -10,6 +10,8 @@ import TipsPage from './pages/Tips/TipsPage';
 import SalonPage from './pages/Salon/SalonPage';
 import PartnerPage from './pages/Salon/PartnerPage';
 import SettingsPage from './pages/Settings/SettingsPage';
+import ContactPage from './pages/Settings/ContactPage';
+import PrivacyPage from './pages/Settings/PrivacyPage';
 import AdminPage from './pages/Admin/AdminPage';
 import NotificationPage from './pages/Notification/NotificationPage';
 
@@ -24,6 +26,8 @@ function AppRoutes() {
       <Route path="/salon" element={<PageLayout><SalonPage /></PageLayout>} />
       <Route path="/salon/partner" element={<PartnerPage />} />
       <Route path="/settings" element={<PageLayout><SettingsPage /></PageLayout>} />
+      <Route path="/settings/contact" element={<ContactPage />} />
+      <Route path="/settings/privacy" element={<PrivacyPage />} />
       <Route path="/notifications" element={<NotificationPage />} />
       <Route path="/admin" element={<AdminPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />

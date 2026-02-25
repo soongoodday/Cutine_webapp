@@ -135,21 +135,21 @@ export default function SettingsPage() {
           <span className={styles.itemArrow}>&gt;</span>
         </button>
 
-        <div className={styles.item}>
+        <button className={styles.item} onClick={() => navigate('/settings/contact')}>
           <div className={styles.itemLeft}>
             <span className={styles.itemIcon}>&#128172;</span>
             <span className={styles.itemLabel}>문의하기</span>
           </div>
           <span className={styles.itemArrow}>&gt;</span>
-        </div>
+        </button>
 
-        <div className={styles.item}>
+        <button className={styles.item} onClick={() => navigate('/settings/privacy')}>
           <div className={styles.itemLeft}>
             <span className={styles.itemIcon}>&#128196;</span>
             <span className={styles.itemLabel}>개인정보처리방침</span>
           </div>
           <span className={styles.itemArrow}>&gt;</span>
-        </div>
+        </button>
       </div>
 
       <button className={styles.dangerBtn} onClick={handleReset}>
