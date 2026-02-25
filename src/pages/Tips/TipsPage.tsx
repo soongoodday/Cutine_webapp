@@ -128,7 +128,7 @@ export default function TipsPage() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.pageTitle}>{'💡'} 헤어 관리 팁</h1>
+      <h1 className={styles.pageTitle}>헤어 관리 팁</h1>
 
       <div className={styles.searchBar}>
         <svg className={styles.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -182,13 +182,23 @@ export default function TipsPage() {
         {visibleTips.map(tip => renderTipCard(tip))}
       </div>
 
-      {hasMore && (
+      {hasMore ? (
         <button
           className={styles.loadMoreBtn}
           onClick={() => setVisibleCount(prev => prev + TIPS_PER_PAGE)}
         >
           더보기
           <svg className={styles.loadMoreIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+      ) : visibleCount > TIPS_PER_PAGE && (
+        <button
+          className={styles.loadMoreBtn}
+          onClick={() => setVisibleCount(TIPS_PER_PAGE)}
+        >
+          접기
+          <svg className={styles.loadMoreIconFlip} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="6 9 12 15 18 9" />
           </svg>
         </button>
