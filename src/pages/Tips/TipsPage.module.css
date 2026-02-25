@@ -74,24 +74,18 @@
   height: 14px;
 }
 
-/* Filter row */
+/* Combined filter + tag row */
 .filterRow {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
-  gap: 8px;
-}
-
-.filters {
-  display: flex;
   gap: 8px;
   overflow-x: auto;
+  margin-bottom: 16px;
   padding-bottom: 4px;
-  flex-shrink: 1;
-  min-width: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
-.filters::-webkit-scrollbar {
+.filterRow::-webkit-scrollbar {
   display: none;
 }
 
@@ -105,6 +99,7 @@
   white-space: nowrap;
   border: 1px solid var(--color-border);
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .filterBtn.active {
@@ -113,22 +108,15 @@
   border-color: var(--color-primary);
 }
 
-/* Hashtag row — horizontal scroll */
-.tagRow {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  margin-bottom: 16px;
-  padding-bottom: 4px;
-  -webkit-overflow-scrolling: touch;
-}
-
-.tagRow::-webkit-scrollbar {
-  display: none;
+.filterDivider {
+  width: 1px;
+  height: 20px;
+  background: var(--color-border);
+  flex-shrink: 0;
 }
 
 .tagBtn {
-  padding: 4px 10px;
+  padding: 5px 10px;
   border-radius: 14px;
   background: transparent;
   color: var(--color-text-secondary);
@@ -345,14 +333,19 @@
   font-weight: 700;
 }
 
-/* Load more button */
+/* Load more / collapse buttons */
+.loadMoreRow {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
 .loadMoreBtn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  width: 100%;
-  margin-top: 16px;
+  flex: 1;
   padding: 12px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);

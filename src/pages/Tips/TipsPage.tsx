@@ -152,21 +152,16 @@ export default function TipsPage() {
       </div>
 
       <div className={styles.filterRow}>
-        <div className={styles.filters}>
-          {categories.map(cat => (
-            <button
-              key={cat.value}
-              className={`${styles.filterBtn} ${filter === cat.value ? styles.active : ''}`}
-              onClick={() => handleFilterChange(cat.value)}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* 해시태그 */}
-      <div className={styles.tagRow}>
+        {categories.map(cat => (
+          <button
+            key={cat.value}
+            className={`${styles.filterBtn} ${filter === cat.value ? styles.active : ''}`}
+            onClick={() => handleFilterChange(cat.value)}
+          >
+            {cat.label}
+          </button>
+        ))}
+        <span className={styles.filterDivider} />
         {visibleTags.map(tag => (
           <button
             key={tag}
@@ -182,27 +177,30 @@ export default function TipsPage() {
         {visibleTips.map(tip => renderTipCard(tip))}
       </div>
 
-      {hasMore ? (
-        <button
-          className={styles.loadMoreBtn}
-          onClick={() => setVisibleCount(prev => prev + TIPS_PER_PAGE)}
-        >
-          더보기
-          <svg className={styles.loadMoreIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </button>
-      ) : visibleCount > TIPS_PER_PAGE && (
-        <button
-          className={styles.loadMoreBtn}
-          onClick={() => setVisibleCount(TIPS_PER_PAGE)}
-        >
-          접기
-          <svg className={styles.loadMoreIconFlip} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </button>
-      )}
+      <div className={styles.loadMoreRow}>
+        {hasMore && (
+          <button
+            className={styles.loadMoreBtn}
+            onClick={() => setVisibleCount(prev => prev + TIPS_PER_PAGE)}
+          >
+            더보기
+            <svg className={styles.loadMoreIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+        )}
+        {visibleCount > TIPS_PER_PAGE && (
+          <button
+            className={styles.loadMoreBtn}
+            onClick={() => setVisibleCount(TIPS_PER_PAGE)}
+          >
+            접기
+            <svg className={styles.loadMoreIconFlip} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+        )}
+      </div>
     </div>
   );
 }
